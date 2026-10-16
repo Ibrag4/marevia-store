@@ -26,7 +26,7 @@ export type Product = {
 
 const pics = {
   floral:
-    "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=1100&q=85",
+    "https://images.unsplash.com/photo-1570976447640-ac859083963f?auto=format&fit=crop&w=1100&q=85",
 
   beach:
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85",
@@ -34,7 +34,7 @@ const pics = {
   bikini:
     "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=1100&q=85",
 
-  swim: "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=1100&q=85",
+  swim: "https://images.unsplash.com/photo-1620078088730-069c41317808?auto=format&fit=crop&w=1100&q=85",
 
   palm: "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1100&q=85",
 
