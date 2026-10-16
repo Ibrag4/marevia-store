@@ -70,8 +70,8 @@ export const products: Product[] = [
     oldPrice: 159.9,
     description:
       "Um vermelho marcante para acompanhar seus dias de sol. O Biquíni Maré Vermelha combina estilo, leveza e personalidade para curtir a praia ou a piscina.",
-    image: "/public/assets/vermelho.png",
-    images: ["/public/assets/vermelho.png"],
+    image: "/assets/vermelho.png",
+    images: ["/assets/vermelho.png"],
     colors: ["Vermelho"],
     sizes,
     variants: mkVariants(["Vermelho"]),
