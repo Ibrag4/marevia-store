@@ -1,1 +1,141 @@
-import {Link} from 'react-router-dom';export function FavoritesPage(){return <main className="section-shell info-page"><span className="eyebrow">SEUS QUERIDINHOS</span><h1>Favoritos<em>.</em></h1><p>Seus produtos salvos aparecem aqui. Você pode favoritar uma peça usando o coração no catálogo.</p><Link className="button button-dark" to="/catalogo">EXPLORAR PEÇAS</Link></main>}export function SizeGuide(){return <main className="section-shell info-page"><span className="eyebrow">ENCONTRE SEU CAIMENTO</span><h1>Guia de <em>medidas.</em></h1><p>Esta tabela é ilustrativa. Antes de vender, substitua as referências pelas medidas reais de cada peça e confira com o fornecedor.</p><table className="size-table"><thead><tr><th>Tamanho</th><th>Busto (referência)</th><th>Cintura (referência)</th><th>Quadril (referência)</th></tr></thead><tbody>{[['P','80–86 cm','60–68 cm','86–94 cm'],['M','87–93 cm','69–76 cm','95–102 cm'],['G','94–100 cm','77–84 cm','103–110 cm'],['GG','101–108 cm','85–93 cm','111–118 cm']].map(r=><tr key={r[0]}>{r.map(c=><td key={c}>{c}</td>)}</tr>)}</tbody></table><p className="muted">As medidas acima são apenas placeholders e não devem ser usadas como medidas oficiais dos produtos.</p></main>}export function PolicyPage({kind}:{kind:'privacy'|'returns'}){return <main className="section-shell info-page"><span className="eyebrow">MARÉVIA · INFORMAÇÕES</span><h1>{kind==='privacy'?'Privacidade':'Trocas e devoluções'}<em>.</em></h1>{kind==='privacy'?<><p>Esta página é um modelo inicial e precisa ser revisada antes da publicação da loja.</p><h2>Dados que podem ser necessários</h2><p>Uma operação de compra pode precisar de nome, contato e endereço para processar pedidos e entregas. Configure quais dados serão coletados, a finalidade, o período de retenção e os canais de contato.</p><h2>Seus direitos</h2><p>Inclua informações verdadeiras sobre solicitações de acesso, correção e exclusão de dados, conforme as regras aplicáveis.</p></>:<><p>Esta página é um espaço para a política comercial oficial. Não publique prazos ou condições que ainda não foram definidos.</p><h2>Antes de comprar</h2><p>Descreva aqui as condições de troca, devolução, reembolso, produtos elegíveis e como entrar em contato com o atendimento.</p></>}<p className="demo-warning">Modelo não revisado juridicamente. Personalize as informações reais da empresa antes de aceitar pedidos.</p><Link className="text-link" to="/catalogo">Voltar à coleção ↗</Link></main>}export function NotFound(){return <main className="not-found section-shell"><span>404</span><h1>Você pegou outra maré.</h1><p>Essa página não foi encontrada, mas ainda tem muito verão por aqui.</p><Link to="/" className="button button-dark">VOLTAR PARA HOME</Link></main>}export function AdminPage(){return <main className="section-shell info-page"><span className="eyebrow">ÁREA RESTRITA</span><h1>Painel <em>administrativo.</em></h1><p>O painel administrativo real exige autenticação configurada no Supabase, políticas RLS e endpoints de servidor. Esta rota está reservada e não oferece operações administrativas até essa configuração ser concluída.</p><p className="demo-warning">Não cadastre credenciais nesta página demonstrativa. Consulte o README para a próxima etapa de configuração.</p></main>}
+import { Link } from "react-router-dom";
+export function FavoritesPage() {
+  return (
+    <main className="section-shell info-page">
+      <span className="eyebrow">SEUS QUERIDINHOS</span>
+      <h1>
+        Favoritos<em>.</em>
+      </h1>
+      <p>
+        Seus produtos salvos aparecem aqui. Você pode favoritar uma peça usando
+        o coração no catálogo.
+      </p>
+      <Link className="button button-dark" to="/catalogo">
+        EXPLORAR PEÇAS
+      </Link>
+    </main>
+  );
+}
+export function SizeGuide() {
+  return (
+    <main className="section-shell info-page">
+      <span className="eyebrow">ENCONTRE SEU CAIMENTO</span>
+      <h1>
+        Guia de <em>medidas.</em>
+      </h1>
+      <p>
+        Esta tabela é ilustrativa. Antes de vender, substitua as referências
+        pelas medidas reais de cada peça e confira com o fornecedor.
+      </p>
+      <table className="size-table">
+        <thead>
+          <tr>
+            <th>Tamanho</th>
+            <th>Busto (referência)</th>
+            <th>Cintura (referência)</th>
+            <th>Quadril (referência)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            ["P", "80–86 cm", "60–68 cm", "86–94 cm"],
+            ["M", "87–93 cm", "69–76 cm", "95–102 cm"],
+            ["G", "94–100 cm", "77–84 cm", "103–110 cm"],
+            ["GG", "101–108 cm", "85–93 cm", "111–118 cm"],
+          ].map((r) => (
+            <tr key={r[0]}>
+              {r.map((c) => (
+                <td key={c}>{c}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="muted">
+        As medidas acima são apenas placeholders e não devem ser usadas como
+        medidas oficiais dos produtos.
+      </p>
+    </main>
+  );
+}
+export function PolicyPage({ kind }: { kind: "privacy" | "returns" }) {
+  return (
+    <main className="section-shell info-page">
+      <span className="eyebrow">MARÉVIA · INFORMAÇÕES</span>
+      <h1>
+        {kind === "privacy" ? "Privacidade" : "Trocas e devoluções"}
+        <em>.</em>
+      </h1>
+      {kind === "privacy" ? (
+        <>
+          <p>
+            Esta página é um modelo inicial e precisa ser revisada antes da
+            publicação da loja.
+          </p>
+          <h2>Dados que podem ser necessários</h2>
+          <p>
+            Uma operação de compra pode precisar de nome, contato e endereço
+            para processar pedidos e entregas. Configure quais dados serão
+            coletados, a finalidade, o período de retenção e os canais de
+            contato.
+          </p>
+          <h2>Seus direitos</h2>
+          <p>
+            Inclua informações verdadeiras sobre solicitações de acesso,
+            correção e exclusão de dados, conforme as regras aplicáveis.
+          </p>
+        </>
+      ) : (
+        <>
+          <p>
+            Esta página é um espaço para a política comercial oficial. Não
+            publique prazos ou condições que ainda não foram definidos.
+          </p>
+          <h2>Antes de comprar</h2>
+          <p>
+            Descreva aqui as condições de troca, devolução, reembolso, produtos
+            elegíveis e como entrar em contato com o atendimento.
+          </p>
+        </>
+      )}
+      <p className="demo-warning">
+        Modelo não revisado juridicamente. Personalize as informações reais da
+        empresa antes de aceitar pedidos.
+      </p>
+      <Link className="text-link" to="/catalogo">
+        Voltar à coleção ↗
+      </Link>
+    </main>
+  );
+}
+export function NotFound() {
+  return (
+    <main className="not-found section-shell">
+      <span>404</span>
+      <h1>Você pegou outra maré.</h1>
+      <p>Essa página não foi encontrada, mas ainda tem muito verão por aqui.</p>
+      <Link to="/" className="button button-dark">
+        VOLTAR PARA HOME
+      </Link>
+    </main>
+  );
+}
+export function AdminPage() {
+  return (
+    <main className="section-shell info-page">
+      <span className="eyebrow">ÁREA RESTRITA</span>
+      <h1>
+        Painel <em>administrativo.</em>
+      </h1>
+      <p>
+        O painel administrativo real exige autenticação configurada no Supabase,
+        políticas RLS e endpoints de servidor. Esta rota está reservada e não
+        oferece operações administrativas até essa configuração ser concluída.
+      </p>
+      <p className="demo-warning">
+        Não cadastre credenciais nesta página demonstrativa. Consulte o README
+        para a próxima etapa de configuração.
+      </p>
+    </main>
+  );
+}
