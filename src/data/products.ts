@@ -60,6 +60,7 @@ const mkVariants = (colors: string[]) =>
       stock: 5,
     }))
   );
+
 export const products: Product[] = [
   {
     id: "p1",
@@ -70,8 +71,8 @@ export const products: Product[] = [
     oldPrice: 159.9,
     description:
       "Um vermelho marcante para acompanhar seus dias de sol. O Biquíni Maré Vermelha combina estilo, leveza e personalidade para curtir a praia ou a piscina.",
-    image: "/assets/vermelho.png",
-    images: ["/assets/vermelho.png"],
+    image: `${import.meta.env.BASE_URL}assets/vermelho.png`,
+    images: [`${import.meta.env.BASE_URL}assets/vermelho.png`],
     colors: ["Vermelho"],
     sizes,
     variants: mkVariants(["Vermelho"]),
@@ -88,8 +89,8 @@ export const products: Product[] = [
     oldPrice: 159.9,
     description:
       "Um amarelo iluminado para trazer ainda mais cor aos dias de verão. O Biquíni Maré Amarelo é leve, versátil e perfeito para aproveitar o sol.",
-    image: "/assets/amarelo.png",
-    images: ["/assets/amarelo.png"],
+    image: `${import.meta.env.BASE_URL}assets/amarelo.png`,
+    images: [`${import.meta.env.BASE_URL}assets/amarelo.png`],
     colors: ["Amarelo"],
     sizes,
     variants: mkVariants(["Amarelo"]),
@@ -106,8 +107,8 @@ export const products: Product[] = [
     oldPrice: 159.9,
     description:
       "Inspirado nos tons do mar, o Biquíni Maré Azul combina frescor e simplicidade em uma peça perfeita para os dias de praia e piscina.",
-    image: "/assets/azul.png",
-    images: ["/assets/azul.png"],
+    image: `${import.meta.env.BASE_URL}assets/azul.png`,
+    images: [`${import.meta.env.BASE_URL}assets/azul.png`],
     colors: ["Azul"],
     sizes,
     variants: mkVariants(["Azul"]),
@@ -124,8 +125,8 @@ export const products: Product[] = [
     oldPrice: 159.9,
     description:
       "Em um tom terroso e moderno, o Biquíni Maré Marrom é uma escolha versátil para compor looks de praia com personalidade.",
-    image: "/assets/marrom.png",
-    images: ["/assets/marrom.png"],
+    image: `${import.meta.env.BASE_URL}assets/marrom.png`,
+    images: [`${import.meta.env.BASE_URL}assets/marrom.png`],
     colors: ["Marrom"],
     sizes,
     variants: mkVariants(["Marrom"]),
@@ -142,8 +143,8 @@ export const products: Product[] = [
     oldPrice: 159.9,
     description:
       "Clássico e fácil de combinar, o Biquíni Maré Preto é ideal para quem gosta de uma peça atemporal que nunca sai de moda.",
-    image: "/assets/preto.png",
-    images: ["/assets/preto.png"],
+    image: `${import.meta.env.BASE_URL}assets/preto.png`,
+    images: [`${import.meta.env.BASE_URL}assets/preto.png`],
     colors: ["Preto"],
     sizes,
     variants: mkVariants(["Preto"]),
@@ -160,8 +161,8 @@ export const products: Product[] = [
     oldPrice: 159.9,
     description:
       "Delicado e cheio de cor, o Biquíni Maré Rosa traz um toque descontraído para os dias de sol, praia e piscina.",
-    image: "/assets/rosa.png",
-    images: ["/assets/rosa.png"],
+    image: `${import.meta.env.BASE_URL}assets/rosa.png`,
+    images: [`${import.meta.env.BASE_URL}assets/rosa.png`],
     colors: ["Rosa"],
     sizes,
     variants: mkVariants(["Rosa"]),
@@ -178,8 +179,8 @@ export const products: Product[] = [
     oldPrice: 159.9,
     description:
       "Com um tom inspirado na natureza, o Biquíni Maré Verde é uma opção fresca e versátil para aproveitar a temporada de verão.",
-    image: "/assets/verde.png",
-    images: ["/assets/verde.png"],
+    image: `${import.meta.env.BASE_URL}assets/verde.png`,
+    images: [`${import.meta.env.BASE_URL}assets/verde.png`],
     colors: ["Verde"],
     sizes,
     variants: mkVariants(["Verde"]),
@@ -188,6 +189,7 @@ export const products: Product[] = [
     print: "Liso",
   },
 ];
+
 export const categories = [
   {
     name: "Biquínis",
@@ -202,5 +204,9 @@ export const categories = [
     description: "Peças únicas, do mergulho ao look fora da areia.",
   },
 ];
+
 export const money = (value: number) =>
-  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
