@@ -31,7 +31,7 @@ function Favorites() {
           .map((p) => (
             <Link
               className="product-card"
-              href={`/produto/${p.slug}`}
+              to={`/produto/${p.slug}`}
               key={p.id}
             >
               <div className="product-image-wrap">

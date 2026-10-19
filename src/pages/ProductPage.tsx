@@ -1,21 +1,37 @@
 import { useState } from "react";
-import { Check, Heart, Minus, Plus, ShoppingBag, Truck } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  Check,
+  CircleAlert,
+  Heart,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Truck,
+} from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 import { money, products } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
-import ProductGrid from "../components/ProductGrid";
-export default function ProductPage() {
+import ProductCheckout from "../components/ProductCheckout";
+
+// A key reinicia o estado (cor, tamanho, checkout) ao trocar de produto
+export default function ProductRoute() {
   const { slug } = useParams();
+  return <ProductPage key={slug} slug={slug} />;
+}
+
+function ProductPage({ slug }: { slug?: string }) {
   const p = products.find((x) => x.slug === slug);
   const [image, setImage] = useState(0);
   const [size, setSize] = useState("");
   const [color, setColor] = useState(p?.colors[0] || "");
   const [qty, setQty] = useState(1);
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(
+    null
+  );
+  const [checkout, setCheckout] = useState(false);
   const { addItem } = useCart();
   const { favorites, toggle } = useFavorites();
-  const nav = useNavigate();
   if (!p)
     return (
       <main className="not-found section-shell">
@@ -27,22 +43,30 @@ export default function ProductPage() {
       </main>
     );
   const variant = p.variants.find((v) => v.size === size && v.color === color);
-  const add = (checkout = false) => {
+  const valid = () => {
     if (!size) {
-      setNotice("Escolha seu tamanho para continuar.");
-      return;
+      setNotice({ ok: false, text: "Escolha seu tamanho para continuar." });
+      return false;
     }
     if (!variant || variant.stock < qty) {
-      setNotice("Essa combinação está indisponível no momento.");
-      return;
+      setNotice({
+        ok: false,
+        text: "Essa combinação está indisponível no momento.",
+      });
+      return false;
     }
+    return true;
+  };
+  const add = () => {
+    if (!valid()) return;
     addItem(p, size, color, qty);
-    setNotice(
-      checkout
-        ? "Peça adicionada. Vamos finalizar sua compra!"
-        : "Adicionado à sacola!"
-    );
-    if (checkout) nav("/checkout");
+    setNotice({ ok: true, text: "Adicionado à sacola!" });
+  };
+  // Compra direta: o checkout abre na própria página, sem passar pela sacola
+  const buyNow = () => {
+    if (!valid()) return;
+    setNotice(null);
+    setCheckout(true);
   };
   return (
     <main className="product-page section-shell">
@@ -105,7 +129,7 @@ export default function ProductPage() {
                   className={color === c ? "selected" : ""}
                   onClick={() => {
                     setColor(c);
-                    setNotice("");
+                    setNotice(null);
                   }}
                 >
                   {c}
@@ -128,9 +152,10 @@ export default function ProductPage() {
                     key={s}
                     disabled={!available}
                     className={size === s ? "selected" : ""}
+                    aria-pressed={size === s}
                     onClick={() => {
                       setSize(s);
-                      setNotice("");
+                      setNotice(null);
                     }}
                   >
                     {s}
@@ -157,23 +182,20 @@ export default function ProductPage() {
               </button>
             </div>
           </div>
-          {notice && (
-            <p className="inline-notice">
-              <Check size={16} />
-              {notice}
-            </p>
-          )}
-          <button
-            className="button button-dark add-button"
-            onClick={() => add(false)}
-          >
-            <ShoppingBag size={17} /> ADICIONAR À SACOLA
-          </button>
-          <button
-            className="button button-outline add-button"
-            onClick={() => add(true)}
-          >
+          <div aria-live="polite">
+            {notice && (
+              <p className={`inline-notice ${notice.ok ? "" : "is-error"}`}>
+                {notice.ok ? <Check size={16} /> : <CircleAlert size={16} />}
+                {notice.text}
+                {notice.ok && <Link to="/sacola">Ver sacola</Link>}
+              </p>
+            )}
+          </div>
+          <button className="button button-dark add-button" onClick={buyNow}>
             COMPRAR AGORA
+          </button>
+          <button className="button button-outline add-button" onClick={add}>
+            <ShoppingBag size={17} /> ADICIONAR À SACOLA
           </button>
           <div className="shipping-note">
             <Truck size={20} />
@@ -204,6 +226,17 @@ export default function ProductPage() {
           </details>
         </div>
       </div>
+      {checkout && variant && (
+        <ProductCheckout
+          product={p}
+          variant={variant}
+          quantity={qty}
+          onEdit={() => {
+            setCheckout(false);
+            window.scrollTo({ top: 0 });
+          }}
+        />
+      )}
     </main>
   );
 }

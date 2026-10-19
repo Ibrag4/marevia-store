@@ -2164,3 +2164,257 @@ img {
         animation: none !important
     }
 }
+/* ========================================
+   MARÉVIA — CHECKOUT NA PÁGINA DO PRODUTO
+   ======================================== */
+
+.inline-notice a {
+    margin-left: auto;
+    text-decoration: underline
+}
+
+.inline-notice.is-error {
+    color: #b23a24
+}
+
+.pdp-checkout {
+    max-width: 760px;
+    margin: 70px auto 0;
+    padding-top: 50px;
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 16px
+}
+
+.pdp-checkout>h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    font-size: clamp(36px, 5vw, 52px);
+    letter-spacing: -.03em;
+    margin: 0 0 28px;
+    outline: 0
+}
+
+.pdp-checkout>h2 em {
+    color: var(--coral)
+}
+
+.pdp-order {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px;
+    background: var(--paper);
+    margin-bottom: 30px
+}
+
+.pdp-order img {
+    width: 64px;
+    height: 80px;
+    object-fit: cover
+}
+
+.pdp-order strong {
+    font-size: 13px
+}
+
+.pdp-order p {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 4px 0 6px
+}
+
+.pdp-order>span {
+    font-size: 14px;
+    font-weight: 600
+}
+
+.link-button {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--coral);
+    font-size: 11px;
+    text-decoration: underline
+}
+
+.pdp-checkout fieldset {
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    margin: 0 0 26px;
+    padding: 0 0 26px
+}
+
+.pdp-checkout legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin-bottom: 18px;
+    padding: 0
+}
+
+.pdp-checkout legend span {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px
+}
+
+.pdp-checkout .form-grid label {
+    font-size: 11px
+}
+
+.pdp-checkout .form-grid input,
+.pdp-checkout .form-grid select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    background: #fffaf2;
+    padding: 12px;
+    font-size: 14px;
+    color: var(--ink);
+    outline-color: var(--coral)
+}
+
+.pdp-checkout .form-grid input:user-invalid,
+.pdp-checkout .form-grid select:user-invalid {
+    border-color: #b23a24
+}
+
+.payment-note {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #625d53;
+    margin: 0
+}
+
+.payment-note svg {
+    flex-shrink: 0;
+    color: var(--green)
+}
+
+.pdp-totals {
+    background: var(--paper);
+    padding: 18px 20px;
+    font-size: 12px
+}
+
+.pdp-totals>div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 8px 0
+}
+
+.pdp-totals .savings {
+    color: var(--green)
+}
+
+.pdp-totals .total {
+    border-top: 1px solid #d1c6b5;
+    padding-top: 14px;
+    margin-top: 14px;
+    font-size: 14px
+}
+
+.pdp-totals .total strong {
+    font-size: 18px
+}
+
+.pdp-checkout .terms-check {
+    align-items: flex-start;
+    font-size: 12px;
+    line-height: 1.5
+}
+
+.pdp-checkout .terms-check input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: var(--coral)
+}
+
+.pdp-checkout .full-button {
+    min-height: 56px;
+    font-size: 11px
+}
+
+.pdp-checkout .full-button:disabled {
+    opacity: .6;
+    cursor: wait;
+    transform: none
+}
+
+.pdp-checkout .demo-warning,
+.checkout-error {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start
+}
+
+.pdp-checkout .demo-warning svg,
+.checkout-error svg {
+    flex-shrink: 0;
+    margin-top: 3px
+}
+
+.checkout-error {
+    font-size: 12px;
+    line-height: 1.6;
+    background: #f6d9d2;
+    color: #8a2c1a;
+    padding: 14px;
+    margin: 15px 0
+}
+
+@media (max-width: 760px) {
+    .pdp-checkout {
+        margin: 40px 20px 0;
+        padding-top: 36px
+    }
+
+    .pdp-checkout .form-grid {
+        grid-template-columns: 1fr 1fr
+    }
+
+    .pdp-order {
+        grid-template-columns: 56px 1fr;
+        padding: 12px
+    }
+
+    .pdp-order img {
+        width: 56px;
+        height: 70px
+    }
+
+    .pdp-order>span {
+        grid-column: 2
+    }
+}
+
+@media (max-width: 380px) {
+    .pdp-checkout {
+        margin-left: 14px;
+        margin-right: 14px
+    }
+
+    .pdp-checkout .form-grid {
+        grid-template-columns: 1fr
+    }
+
+    .pdp-checkout .wide-field {
+        grid-column: auto
+    }
+}
