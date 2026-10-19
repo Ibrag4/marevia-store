@@ -56,11 +56,13 @@ function Favorites() {
 
 export default function App() {
   const { pathname } = useLocation();
-  const isProductPage = pathname.startsWith("/produto/");
+  // Produto e checkout têm layout próprio, sem o cabeçalho e o rodapé da loja
+  const bareLayout =
+    pathname.startsWith("/produto/") || pathname === "/checkout";
 
   return (
     <>
-      {!isProductPage && <Header />}
+      {!bareLayout && <Header />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -98,7 +100,7 @@ export default function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-      {!isProductPage && <Footer />}
+      {!bareLayout && <Footer />}
     </>
   );
 }

@@ -2164,9 +2164,6 @@ img {
         animation: none !important
     }
 }
-/* ========================================
-   MARÉVIA — CHECKOUT NA PÁGINA DO PRODUTO
-   ======================================== */
 
 .inline-notice a {
     margin-left: auto;
@@ -2177,244 +2174,726 @@ img {
     color: #b23a24
 }
 
-.pdp-checkout {
-    max-width: 760px;
-    margin: 70px auto 0;
-    padding-top: 50px;
-    border-top: 1px solid var(--line);
-    scroll-margin-top: 16px
+/* ========================================
+   MARÉVIA — CHECKOUT (padrão Shopify)
+   ======================================== */
+
+.ck {
+    --ck-accent: #c24f35;
+    --ck-accent-bg: #c24f35;
+    --ck-accent-hover: #a8432c;
+    --ck-tint: #fbf1ed;
+    --ck-bg: #fff;
+    --ck-text: #1a1a1a;
+    --ck-field: #fff;
+    --ck-border: #d9d9d9;
+    --ck-soft: #e6e6e6;
+    --ck-muted: #707070;
+    --ck-panel: #f5f3ef;
+    --ck-inset: rgba(0, 0, 0, .035);
+    --ck-error: #d61f1f;
+    --ck-success: #2e7d4f;
+    --ck-badge-bg: rgba(26, 26, 26, .78);
+    --ck-badge-text: #fff;
+    --ck-demo-bg: #fdf3e3;
+    --ck-demo-text: #7a4b12;
+    --ck-fail-bg: #fdecec;
+    --ck-fail-text: #a51818;
+    color-scheme: light;
+    min-height: 100vh;
+    background: var(--ck-bg);
+    color: var(--ck-text);
+    transition: background .2s, color .2s
 }
 
-.pdp-checkout>h2 {
-    font-family: 'Playfair Display', serif;
-    font-weight: 500;
-    font-size: clamp(36px, 5vw, 52px);
-    letter-spacing: -.03em;
-    margin: 0 0 28px;
-    outline: 0
+/* Modo escuro: o botão de pagar mantém o coral original para o texto branco seguir legível */
+.ck.is-dark {
+    --ck-accent: #ef8a74;
+    --ck-tint: #2b1e1a;
+    --ck-bg: #141414;
+    --ck-text: #f2f2f2;
+    --ck-field: #1c1c1c;
+    --ck-border: #3d3d3d;
+    --ck-soft: #2a2a2a;
+    --ck-muted: #a6a6a6;
+    --ck-panel: #1b1b1b;
+    --ck-inset: rgba(255, 255, 255, .05);
+    --ck-error: #ff7a7a;
+    --ck-success: #6fcf97;
+    --ck-badge-bg: #e6e6e6;
+    --ck-badge-text: #141414;
+    --ck-demo-bg: #3a2d16;
+    --ck-demo-text: #f3d49c;
+    --ck-fail-bg: #3d1c1c;
+    --ck-fail-text: #ffb4b4;
+    color-scheme: dark
 }
 
-.pdp-checkout>h2 em {
-    color: var(--coral)
+/* Evita a faixa creme da loja ao rolar além do fim da página no modo escuro */
+:root:has(.ck.is-dark) {
+    background: #141414
 }
 
-.pdp-order {
+.ck-header {
+    border-bottom: 1px solid var(--ck-soft)
+}
+
+.ck-header>div {
     display: grid;
-    grid-template-columns: 64px 1fr auto;
-    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
-    padding: 14px;
-    background: var(--paper);
-    margin-bottom: 30px
+    height: 76px
 }
 
-.pdp-order img {
-    width: 64px;
-    height: 80px;
-    object-fit: cover
+.ck-header .wordmark {
+    justify-self: end;
+    width: calc(100% - 76px);
+    max-width: 570px;
+    margin-right: 38px;
+    font-size: 26px
 }
 
-.pdp-order strong {
-    font-size: 13px
-}
-
-.pdp-order p {
-    font-size: 11px;
-    color: var(--muted);
-    margin: 4px 0 6px
-}
-
-.pdp-order>span {
-    font-size: 14px;
-    font-weight: 600
-}
-
-.link-button {
-    background: none;
-    border: 0;
-    padding: 0;
-    color: var(--coral);
-    font-size: 11px;
-    text-decoration: underline
-}
-
-.pdp-checkout fieldset {
-    border: 0;
-    border-bottom: 1px solid var(--line);
-    margin: 0 0 26px;
-    padding: 0 0 26px
-}
-
-.pdp-checkout legend {
+.ck-header-actions {
+    justify-self: start;
+    width: calc(100% - 76px);
+    max-width: 364px;
+    margin-left: 38px;
     display: flex;
+    justify-content: flex-end;
     align-items: center;
-    gap: 10px;
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    margin-bottom: 18px;
-    padding: 0
+    gap: 8px
 }
 
-.pdp-checkout legend span {
+.ck-bag,
+.ck-icon {
+    display: inline-flex;
+    padding: 6px;
+    border: 0;
+    background: none;
+    color: var(--ck-accent)
+}
+
+.ck-bag svg,
+.ck-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.7
+}
+
+.ck-summary-toggle {
+    display: none
+}
+
+.ck-body {
     display: grid;
-    place-items: center;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--ink);
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: calc(100vh - 77px)
 }
 
-.pdp-checkout .form-grid label {
+.ck-main {
+    padding: 38px 38px 0
+}
+
+.ck-main>* {
+    max-width: 570px;
+    margin-left: auto
+}
+
+.ck-section {
+    margin-bottom: 34px
+}
+
+.ck-section h2 {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    margin: 0 0 14px
+}
+
+.ck-sub {
+    font-size: 13px;
+    color: var(--ck-muted);
+    margin: -8px 0 14px
+}
+
+.ck-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px
+}
+
+.ck-grid .span-2 {
+    grid-column: span 2
+}
+
+/* Campo com rótulo flutuante */
+.ck-field {
+    position: relative
+}
+
+.ck-field input,
+.ck-field select {
+    width: 100%;
+    height: 52px;
+    padding: 21px 12px 6px;
+    border: 1px solid var(--ck-border);
+    border-radius: 6px;
+    background: var(--ck-field);
+    color: var(--ck-text);
+    font-size: 14px;
+    outline: 0;
+    transition: border-color .15s, box-shadow .15s
+}
+
+.ck-field select {
+    appearance: none;
+    padding-right: 36px;
+    background: var(--ck-field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23707070' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center
+}
+
+.ck-field label {
+    position: absolute;
+    left: 13px;
+    top: 16px;
+    max-width: calc(100% - 26px);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    color: var(--ck-muted);
+    pointer-events: none;
+    transition: top .15s, font-size .15s
+}
+
+.ck-field input:focus+label,
+.ck-field input:not(:placeholder-shown)+label,
+.ck-field.is-select label {
+    top: 7px;
     font-size: 11px
 }
 
-.pdp-checkout .form-grid input,
-.pdp-checkout .form-grid select {
-    width: 100%;
-    min-height: 46px;
-    border: 1px solid var(--line);
-    border-radius: 0;
-    background: #fffaf2;
-    padding: 12px;
-    font-size: 14px;
-    color: var(--ink);
-    outline-color: var(--coral)
+.ck-field input:focus,
+.ck-field select:focus {
+    border-color: var(--ck-accent);
+    box-shadow: 0 0 0 1px var(--ck-accent)
 }
 
-.pdp-checkout .form-grid input:user-invalid,
-.pdp-checkout .form-grid select:user-invalid {
-    border-color: #b23a24
+.ck-field.has-error input,
+.ck-field.has-error select {
+    border-color: var(--ck-error);
+    box-shadow: 0 0 0 1px var(--ck-error)
 }
 
-.payment-note {
+.ck-error {
     display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: var(--ck-error)
+}
+
+.ck-error svg {
+    flex-shrink: 0
+}
+
+.ck-check {
+    display: flex;
+    align-items: center;
     gap: 10px;
-    align-items: flex-start;
-    font-size: 12px;
-    line-height: 1.6;
-    color: #625d53;
-    margin: 0
+    margin-top: 13px;
+    font-size: 13px;
+    cursor: pointer
 }
 
-.payment-note svg {
-    flex-shrink: 0;
-    color: var(--green)
-}
-
-.pdp-totals {
-    background: var(--paper);
-    padding: 18px 20px;
-    font-size: 12px
-}
-
-.pdp-totals>div {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 8px 0
-}
-
-.pdp-totals .savings {
-    color: var(--green)
-}
-
-.pdp-totals .total {
-    border-top: 1px solid #d1c6b5;
-    padding-top: 14px;
-    margin-top: 14px;
-    font-size: 14px
-}
-
-.pdp-totals .total strong {
-    font-size: 18px
-}
-
-.pdp-checkout .terms-check {
-    align-items: flex-start;
-    font-size: 12px;
-    line-height: 1.5
-}
-
-.pdp-checkout .terms-check input {
+.ck-check input {
     width: 18px;
     height: 18px;
     margin: 0;
     flex-shrink: 0;
-    accent-color: var(--coral)
+    accent-color: var(--ck-accent)
 }
 
-.pdp-checkout .full-button {
+/* Opções de frete e pagamento */
+.ck-options {
+    border: 1px solid var(--ck-border);
+    border-radius: 6px;
+    overflow: hidden
+}
+
+.ck-option-wrap+.ck-option-wrap,
+.ck-option+.ck-option {
+    border-top: 1px solid var(--ck-border)
+}
+
+.ck-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     min-height: 56px;
-    font-size: 11px
+    padding: 14px 16px;
+    font-size: 14px;
+    cursor: pointer
 }
 
-.pdp-checkout .full-button:disabled {
-    opacity: .6;
-    cursor: wait;
-    transform: none
+.ck-option.is-selected,
+.ck-option-wrap.is-selected>.ck-option {
+    background: var(--ck-tint);
+    box-shadow: inset 0 0 0 1px var(--ck-accent)
 }
 
-.pdp-checkout .demo-warning,
-.checkout-error {
+.ck-option input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: var(--ck-accent)
+}
+
+.ck-option-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px
+}
+
+.ck-option-text small {
+    font-size: 12px;
+    color: var(--ck-muted)
+}
+
+.ck-brands {
+    display: flex;
+    gap: 4px
+}
+
+.ck-brands span {
+    padding: 3px 5px;
+    border: 1px solid var(--ck-border);
+    border-radius: 3px;
+    background: var(--ck-field);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    color: var(--ck-text)
+}
+
+.ck-option-body {
+    padding: 22px 32px 24px;
+    background: var(--ck-inset);
+    border-top: 1px solid var(--ck-border);
+    text-align: center
+}
+
+.ck-option-body p {
+    max-width: 340px;
+    margin: 0 auto;
+    font-size: 13px;
+    line-height: 1.55
+}
+
+.ck-redirect {
+    display: block;
+    width: 108px;
+    margin: 0 auto 14px;
+    color: var(--ck-muted)
+}
+
+.ck-placeholder {
+    margin: 0;
+    padding: 16px;
+    border-radius: 6px;
+    background: var(--ck-inset);
+    font-size: 13px;
+    color: var(--ck-muted)
+}
+
+.ck-pay {
+    width: 100%;
+    min-height: 58px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--ck-accent-bg);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background .15s
+}
+
+.ck-pay:hover {
+    background: var(--ck-accent-hover)
+}
+
+.ck-pay:focus-visible {
+    outline: 2px solid var(--ck-accent);
+    outline-offset: 2px
+}
+
+.ck-pay:disabled {
+    opacity: .7;
+    cursor: wait
+}
+
+.ck-status {
     display: flex;
     gap: 8px;
-    align-items: flex-start
+    align-items: flex-start;
+    margin: 14px 0 0;
+    padding: 13px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.5
 }
 
-.pdp-checkout .demo-warning svg,
-.checkout-error svg {
+.ck-status svg {
     flex-shrink: 0;
-    margin-top: 3px
+    margin-top: 2px
 }
 
-.checkout-error {
+.ck-status.is-demo {
+    background: var(--ck-demo-bg);
+    color: var(--ck-demo-text)
+}
+
+.ck-status.is-error {
+    background: var(--ck-fail-bg);
+    color: var(--ck-fail-text)
+}
+
+.ck-legal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 16px 0 0;
     font-size: 12px;
-    line-height: 1.6;
-    background: #f6d9d2;
-    color: #8a2c1a;
-    padding: 14px;
-    margin: 15px 0
+    color: var(--ck-muted)
 }
 
-@media (max-width: 760px) {
-    .pdp-checkout {
-        margin: 40px 20px 0;
-        padding-top: 36px
-    }
+.ck-legal a,
+.ck-footer a {
+    color: var(--ck-accent);
+    text-decoration: underline
+}
 
-    .pdp-checkout .form-grid {
-        grid-template-columns: 1fr 1fr
-    }
+.ck-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: 44px;
+    padding: 18px 0 26px;
+    border-top: 1px solid var(--ck-soft);
+    font-size: 12px
+}
 
-    .pdp-order {
-        grid-template-columns: 56px 1fr;
-        padding: 12px
-    }
+/* Resumo do pedido */
+.ck-summary {
+    background: var(--ck-panel);
+    border-left: 1px solid var(--ck-soft)
+}
 
-    .pdp-order img {
-        width: 56px;
-        height: 70px
-    }
+.ck-summary-inner {
+    position: sticky;
+    top: 0;
+    max-width: 440px;
+    padding: 38px
+}
 
-    .pdp-order>span {
-        grid-column: 2
+.ck-lines {
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 0;
+    display: grid;
+    gap: 16px
+}
+
+.ck-lines li {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    font-size: 14px
+}
+
+.ck-thumb {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border: 1px solid var(--ck-soft);
+    border-radius: 8px;
+    background: var(--ck-field)
+}
+
+.ck-thumb img {
+    width: 100%;
+    height: 100%;
+    border-radius: 7px;
+    object-fit: cover;
+    object-position: center 30%
+}
+
+.ck-thumb span {
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 11px;
+    background: var(--ck-badge-bg);
+    color: var(--ck-badge-text);
+    font-size: 12px;
+    font-weight: 600;
+    display: grid;
+    place-items: center
+}
+
+.ck-line-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0
+}
+
+.ck-line-info strong {
+    font-weight: 500
+}
+
+.ck-line-info small {
+    font-size: 12px;
+    color: var(--ck-muted)
+}
+
+.ck-totals {
+    margin: 0;
+    font-size: 14px
+}
+
+.ck-totals>div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px
+}
+
+.ck-totals dt,
+.ck-totals dd {
+    margin: 0
+}
+
+.ck-totals dd {
+    text-align: right
+}
+
+.ck-totals dd.muted {
+    color: var(--ck-muted);
+    font-size: 13px
+}
+
+.ck-total {
+    align-items: baseline;
+    margin-top: 18px;
+    font-size: 19px;
+    font-weight: 600
+}
+
+.ck-total small {
+    margin-right: 8px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ck-muted)
+}
+
+.ck-savings {
+    font-weight: 600
+}
+
+.ck-savings dt {
+    display: flex;
+    align-items: center;
+    gap: 6px
+}
+
+/* Busca de CEP */
+.ck-cep-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: start
+}
+
+.ck-cep-row>button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 52px;
+    padding: 0 18px;
+    border: 1px solid var(--ck-border);
+    border-radius: 6px;
+    background: var(--ck-field);
+    color: var(--ck-text);
+    font-size: 14px;
+    font-weight: 600;
+    transition: border-color .15s, color .15s
+}
+
+.ck-cep-row>button:hover {
+    border-color: var(--ck-accent);
+    color: var(--ck-accent)
+}
+
+.ck-cep-row>button:focus-visible {
+    outline: 2px solid var(--ck-accent);
+    outline-offset: 2px
+}
+
+.ck-cep-row>button[aria-busy=true] {
+    cursor: wait
+}
+
+.ck-cep-meta {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-top: 7px;
+    font-size: 12px
+}
+
+.ck-cep-meta p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    color: var(--ck-muted)
+}
+
+.ck-cep-meta p.is-found {
+    color: var(--ck-success)
+}
+
+.ck-cep-meta a {
+    margin-left: auto;
+    color: var(--ck-accent);
+    text-decoration: underline;
+    white-space: nowrap
+}
+
+.ck-spin {
+    animation: ck-spin .8s linear infinite
+}
+
+@keyframes ck-spin {
+    to {
+        transform: rotate(360deg)
     }
 }
 
-@media (max-width: 380px) {
-    .pdp-checkout {
-        margin-left: 14px;
-        margin-right: 14px
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0
+}
+
+/* Celular: resumo recolhível no topo, como na Shopify */
+@media (max-width: 1000px) {
+    .ck-header>div {
+        grid-template-columns: 1fr auto;
+        padding: 0 20px;
+        height: 64px
     }
 
-    .pdp-checkout .form-grid {
-        grid-template-columns: 1fr
+    .ck-header .wordmark {
+        justify-self: start;
+        width: auto;
+        margin: 0;
+        font-size: 22px
     }
 
-    .pdp-checkout .wide-field {
-        grid-column: auto
+    .ck-header-actions {
+        width: auto;
+        margin: 0
+    }
+
+    .ck-summary-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 17px 20px;
+        border: 0;
+        border-bottom: 1px solid var(--ck-soft);
+        background: var(--ck-panel);
+        color: var(--ck-text);
+        font-size: 14px
+    }
+
+    .ck-summary-toggle span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--ck-accent)
+    }
+
+    .ck-summary-toggle svg {
+        transition: transform .2s
+    }
+
+    .ck-summary-toggle[aria-expanded=true] svg {
+        transform: rotate(180deg)
+    }
+
+    .ck-summary-toggle strong {
+        font-size: 17px
+    }
+
+    .ck-body {
+        display: flex;
+        flex-direction: column;
+        min-height: 0
+    }
+
+    .ck-summary {
+        order: -1;
+        display: none;
+        border-left: 0;
+        border-bottom: 1px solid var(--ck-soft)
+    }
+
+    .ck-summary.is-open {
+        display: block
+    }
+
+    .ck-summary-inner {
+        position: static;
+        max-width: 620px;
+        margin: 0 auto;
+        padding: 22px 20px
+    }
+
+    .ck-main {
+        padding: 26px 20px 0
+    }
+
+    .ck-main>* {
+        max-width: 620px;
+        margin-right: auto
+    }
+}
+
+@media (max-width: 420px) {
+    .ck-grid {
+        gap: 12px
+    }
+
+    .ck-option-body {
+        padding: 20px 16px
     }
 }

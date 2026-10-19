@@ -8,11 +8,11 @@ import {
   ShoppingBag,
   Truck,
 } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { money, products } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
-import ProductCheckout from "../components/ProductCheckout";
+import CheckoutView from "../components/CheckoutView";
 
 // A key reinicia o estado (cor, tamanho, checkout) ao trocar de produto
 export default function ProductRoute() {
@@ -29,7 +29,7 @@ function ProductPage({ slug }: { slug?: string }) {
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(
     null
   );
-  const [checkout, setCheckout] = useState(false);
+  const [params, setParams] = useSearchParams();
   const { addItem } = useCart();
   const { favorites, toggle } = useFavorites();
   if (!p)
@@ -62,12 +62,39 @@ function ProductPage({ slug }: { slug?: string }) {
     addItem(p, size, color, qty);
     setNotice({ ok: true, text: "Adicionado à sacola!" });
   };
-  // Compra direta: o checkout abre na própria página, sem passar pela sacola
+  // Compra direta: o checkout abre na própria página (?comprar=variante&qtd=n),
+  // sem passar pela sacola. O botão voltar do navegador retorna ao produto.
   const buyNow = () => {
-    if (!valid()) return;
+    if (!valid() || !variant) return;
     setNotice(null);
-    setCheckout(true);
+    setParams({ comprar: variant.id, qtd: String(qty) });
   };
+
+  const buyVariant = p.variants.find((v) => v.id === params.get("comprar"));
+  if (buyVariant && buyVariant.stock > 0) {
+    const quantity = Math.min(
+      buyVariant.stock,
+      Math.max(1, Math.floor(Number(params.get("qtd"))) || 1)
+    );
+    return (
+      <CheckoutView
+        items={[
+          {
+            productId: p.id,
+            variantId: buyVariant.id,
+            name: p.name,
+            image: p.image,
+            price: p.price,
+            size: buyVariant.size,
+            color: buyVariant.color,
+            quantity,
+          },
+        ]}
+        backTo={`/produto/${p.slug}`}
+        backLabel="Voltar ao produto"
+      />
+    );
+  }
   return (
     <main className="product-page section-shell">
       <div className="breadcrumbs">
@@ -226,17 +253,6 @@ function ProductPage({ slug }: { slug?: string }) {
           </details>
         </div>
       </div>
-      {checkout && variant && (
-        <ProductCheckout
-          product={p}
-          variant={variant}
-          quantity={qty}
-          onEdit={() => {
-            setCheckout(false);
-            window.scrollTo({ top: 0 });
-          }}
-        />
-      )}
     </main>
   );
 }
