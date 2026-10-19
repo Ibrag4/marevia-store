@@ -20,7 +20,12 @@ export type Product = {
   badge?: string;
   featured?: boolean;
   print: string;
+  // Produtos com a mesma família são o mesmo modelo em cores diferentes
+  family?: string;
 };
+
+// O fallback permite importar este arquivo no vite.config (Node), onde import.meta.env não existe.
+const BASE = import.meta.env?.BASE_URL ?? "/";
 
 // Fotos de referência para o protótipo. Troque pelas fotos reais dos produtos antes de vender.
 
@@ -67,12 +72,13 @@ export const products: Product[] = [
     slug: "biquini-mare-vermelha",
     name: "Biquíni Maré Vermelha",
     category: "biquinis",
+    family: "mare",
     price: 69.9,
     oldPrice: 159.9,
     description:
       "Um vermelho marcante para acompanhar seus dias de sol. O Biquíni Maré Vermelha combina estilo, leveza e personalidade para curtir a praia ou a piscina.",
-    image: `${import.meta.env.BASE_URL}assets/vermelho.png`,
-    images: [`${import.meta.env.BASE_URL}assets/vermelho.png`],
+    image: `${BASE}assets/vermelho.jpg`,
+    images: [`${BASE}assets/vermelho.jpg`],
     colors: ["Vermelho"],
     sizes,
     variants: mkVariants(["Vermelho"]),
@@ -85,12 +91,13 @@ export const products: Product[] = [
     slug: "biquini-mare-amarelo",
     name: "Biquíni Maré Amarelo",
     category: "biquinis",
+    family: "mare",
     price: 69.9,
     oldPrice: 159.9,
     description:
       "Um amarelo iluminado para trazer ainda mais cor aos dias de verão. O Biquíni Maré Amarelo é leve, versátil e perfeito para aproveitar o sol.",
-    image: `${import.meta.env.BASE_URL}assets/amarelo.png`,
-    images: [`${import.meta.env.BASE_URL}assets/amarelo.png`],
+    image: `${BASE}assets/amarelo.jpg`,
+    images: [`${BASE}assets/amarelo.jpg`],
     colors: ["Amarelo"],
     sizes,
     variants: mkVariants(["Amarelo"]),
@@ -103,12 +110,13 @@ export const products: Product[] = [
     slug: "biquini-mare-azul",
     name: "Biquíni Maré Azul",
     category: "biquinis",
+    family: "mare",
     price: 69.9,
     oldPrice: 159.9,
     description:
       "Inspirado nos tons do mar, o Biquíni Maré Azul combina frescor e simplicidade em uma peça perfeita para os dias de praia e piscina.",
-    image: `${import.meta.env.BASE_URL}assets/azul.png`,
-    images: [`${import.meta.env.BASE_URL}assets/azul.png`],
+    image: `${BASE}assets/azul.jpg`,
+    images: [`${BASE}assets/azul.jpg`],
     colors: ["Azul"],
     sizes,
     variants: mkVariants(["Azul"]),
@@ -121,12 +129,13 @@ export const products: Product[] = [
     slug: "biquini-mare-marrom",
     name: "Biquíni Maré Marrom",
     category: "biquinis",
+    family: "mare",
     price: 69.9,
     oldPrice: 159.9,
     description:
       "Em um tom terroso e moderno, o Biquíni Maré Marrom é uma escolha versátil para compor looks de praia com personalidade.",
-    image: `${import.meta.env.BASE_URL}assets/marrom.png`,
-    images: [`${import.meta.env.BASE_URL}assets/marrom.png`],
+    image: `${BASE}assets/marrom.jpg`,
+    images: [`${BASE}assets/marrom.jpg`],
     colors: ["Marrom"],
     sizes,
     variants: mkVariants(["Marrom"]),
@@ -139,12 +148,13 @@ export const products: Product[] = [
     slug: "biquini-mare-preto",
     name: "Biquíni Maré Preto",
     category: "biquinis",
+    family: "mare",
     price: 69.9,
     oldPrice: 159.9,
     description:
       "Clássico e fácil de combinar, o Biquíni Maré Preto é ideal para quem gosta de uma peça atemporal que nunca sai de moda.",
-    image: `${import.meta.env.BASE_URL}assets/preto.png`,
-    images: [`${import.meta.env.BASE_URL}assets/preto.png`],
+    image: `${BASE}assets/preto.jpg`,
+    images: [`${BASE}assets/preto.jpg`],
     colors: ["Preto"],
     sizes,
     variants: mkVariants(["Preto"]),
@@ -157,12 +167,13 @@ export const products: Product[] = [
     slug: "biquini-mare-rosa",
     name: "Biquíni Maré Rosa",
     category: "biquinis",
+    family: "mare",
     price: 69.9,
     oldPrice: 159.9,
     description:
       "Delicado e cheio de cor, o Biquíni Maré Rosa traz um toque descontraído para os dias de sol, praia e piscina.",
-    image: `${import.meta.env.BASE_URL}assets/rosa.png`,
-    images: [`${import.meta.env.BASE_URL}assets/rosa.png`],
+    image: `${BASE}assets/rosa.jpg`,
+    images: [`${BASE}assets/rosa.jpg`],
     colors: ["Rosa"],
     sizes,
     variants: mkVariants(["Rosa"]),
@@ -175,12 +186,13 @@ export const products: Product[] = [
     slug: "biquini-mare-verde",
     name: "Biquíni Maré Verde",
     category: "biquinis",
+    family: "mare",
     price: 69.9,
     oldPrice: 159.9,
     description:
       "Com um tom inspirado na natureza, o Biquíni Maré Verde é uma opção fresca e versátil para aproveitar a temporada de verão.",
-    image: `${import.meta.env.BASE_URL}assets/verde.png`,
-    images: [`${import.meta.env.BASE_URL}assets/verde.png`],
+    image: `${BASE}assets/verde.jpg`,
+    images: [`${BASE}assets/verde.jpg`],
     colors: ["Verde"],
     sizes,
     variants: mkVariants(["Verde"]),
@@ -203,6 +215,25 @@ export const categories = [
     image: pics.swim,
     description: "Peças únicas, do mergulho ao look fora da areia.",
   },
+];
+
+// Cor da bolinha de cada cor na página do produto
+export const swatches: Record<string, string> = {
+  Vermelho: "#b40723",
+  Amarelo: "#f4c254",
+  Azul: "#404b70",
+  Marrom: "#53281a",
+  Preto: "#0f0d11",
+  Rosa: "#f0b7cb",
+  Verde: "#1c8558",
+};
+
+// Tabela ilustrativa: substitua pelas medidas reais das peças antes de vender.
+export const sizeChart = [
+  { size: "P", bust: "80–86 cm", waist: "60–68 cm", hips: "86–94 cm" },
+  { size: "M", bust: "87–93 cm", waist: "69–76 cm", hips: "95–102 cm" },
+  { size: "G", bust: "94–100 cm", waist: "77–84 cm", hips: "103–110 cm" },
+  { size: "GG", bust: "101–108 cm", waist: "85–93 cm", hips: "111–118 cm" },
 ];
 
 export const money = (value: number) =>
