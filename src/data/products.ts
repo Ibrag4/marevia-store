@@ -97,7 +97,7 @@ export const products: Product[] = [
     description:
       "Um amarelo iluminado para trazer ainda mais cor aos dias de verão. O Biquíni Maré Amarelo é leve, versátil e perfeito para aproveitar o sol.",
     image: `${BASE}assets/amarelo.jpg`,
-    images: [`${BASE}assets/amarelo.jpg`],
+    images: [`${BASE}assets/amarelo.jpg`, `${BASE}assets/amarelo-costas.jpg`],
     colors: ["Amarelo"],
     sizes,
     variants: mkVariants(["Amarelo"]),
@@ -116,7 +116,7 @@ export const products: Product[] = [
     description:
       "Inspirado nos tons do mar, o Biquíni Maré Azul combina frescor e simplicidade em uma peça perfeita para os dias de praia e piscina.",
     image: `${BASE}assets/azul.jpg`,
-    images: [`${BASE}assets/azul.jpg`],
+    images: [`${BASE}assets/azul.jpg`, `${BASE}assets/azul-costas.jpg`],
     colors: ["Azul"],
     sizes,
     variants: mkVariants(["Azul"]),
@@ -135,7 +135,7 @@ export const products: Product[] = [
     description:
       "Em um tom terroso e moderno, o Biquíni Maré Marrom é uma escolha versátil para compor looks de praia com personalidade.",
     image: `${BASE}assets/marrom.jpg`,
-    images: [`${BASE}assets/marrom.jpg`],
+    images: [`${BASE}assets/marrom.jpg`, `${BASE}assets/marrom-costas.jpg`],
     colors: ["Marrom"],
     sizes,
     variants: mkVariants(["Marrom"]),
@@ -154,7 +154,7 @@ export const products: Product[] = [
     description:
       "Clássico e fácil de combinar, o Biquíni Maré Preto é ideal para quem gosta de uma peça atemporal que nunca sai de moda.",
     image: `${BASE}assets/preto.jpg`,
-    images: [`${BASE}assets/preto.jpg`],
+    images: [`${BASE}assets/preto.jpg`, `${BASE}assets/preto-costas.jpg`],
     colors: ["Preto"],
     sizes,
     variants: mkVariants(["Preto"]),
@@ -173,7 +173,7 @@ export const products: Product[] = [
     description:
       "Delicado e cheio de cor, o Biquíni Maré Rosa traz um toque descontraído para os dias de sol, praia e piscina.",
     image: `${BASE}assets/rosa.jpg`,
-    images: [`${BASE}assets/rosa.jpg`],
+    images: [`${BASE}assets/rosa.jpg`, `${BASE}assets/rosa-costas.jpg`],
     colors: ["Rosa"],
     sizes,
     variants: mkVariants(["Rosa"]),
@@ -192,7 +192,7 @@ export const products: Product[] = [
     description:
       "Com um tom inspirado na natureza, o Biquíni Maré Verde é uma opção fresca e versátil para aproveitar a temporada de verão.",
     image: `${BASE}assets/verde.jpg`,
-    images: [`${BASE}assets/verde.jpg`],
+    images: [`${BASE}assets/verde.jpg`, `${BASE}assets/verde-costas.jpg`],
     colors: ["Verde"],
     sizes,
     variants: mkVariants(["Verde"]),
@@ -220,12 +220,12 @@ export const categories = [
 // Cor da bolinha de cada cor na página do produto
 export const swatches: Record<string, string> = {
   Vermelho: "#b40723",
-  Amarelo: "#f4c254",
-  Azul: "#404b70",
-  Marrom: "#53281a",
-  Preto: "#0f0d11",
-  Rosa: "#f0b7cb",
-  Verde: "#1c8558",
+  Amarelo: "#e9b95b",
+  Azul: "#1a2350",
+  Marrom: "#89544d",
+  Preto: "#181420",
+  Rosa: "#e293ac",
+  Verde: "#1e8661",
 };
 
 // Tabela ilustrativa: substitua pelas medidas reais das peças antes de vender.

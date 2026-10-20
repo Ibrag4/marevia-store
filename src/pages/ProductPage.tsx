@@ -1,19 +1,41 @@
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import {
   Check,
+  ChevronLeft,
   CircleAlert,
+  CreditCard,
   Heart,
   Minus,
   Plus,
+  RotateCcw,
+  Ruler,
   ShoppingBag,
   Truck,
 } from "lucide-react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import { money, products } from "../data/products";
+import {
+  Link,
+  useLocation,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import { categories, money, products, swatches } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import CheckoutView from "../components/CheckoutView";
 import ThemeToggle from "../components/ThemeToggle";
+
+// As fotos de cada produto seguem a ordem: frente, costas
+const views = ["Frente", "Costas"];
+const viewName = (i: number) => views[i] ?? `Foto ${i + 1}`;
+
+// Ao trocar de cor, o tamanho e a foto escolhidos vão junto para a outra página
+type Carried = { size?: string; view?: number } | null;
+
+const motion = (): ScrollBehavior =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? "auto"
+    : "smooth";
 
 // A key reinicia o estado (cor, tamanho, checkout) ao trocar de produto
 export default function ProductRoute() {
@@ -23,16 +45,49 @@ export default function ProductRoute() {
 
 function ProductPage({ slug }: { slug?: string }) {
   const p = products.find((x) => x.slug === slug);
-  const [image, setImage] = useState(0);
-  const [size, setSize] = useState("");
+  const carried = useLocation().state as Carried;
+  const [image, setImage] = useState(() =>
+    Math.max(0, Math.min(carried?.view ?? 0, (p?.images.length ?? 1) - 1))
+  );
+  const [size, setSize] = useState(() => {
+    const s = carried?.size;
+    const available = p?.variants.some(
+      (v) => v.size === s && v.color === p.colors[0] && v.stock > 0
+    );
+    return s && available ? s : "";
+  });
   const [color, setColor] = useState(p?.colors[0] || "");
   const [qty, setQty] = useState(1);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(
     null
   );
+  const [ctaVisible, setCtaVisible] = useState(true);
+  const track = useRef<HTMLDivElement>(null);
+  const cta = useRef<HTMLDivElement>(null);
+  const sizeGroup = useRef<HTMLDivElement>(null);
   const [params, setParams] = useSearchParams();
-  const { addItem } = useCart();
+  const { addItem, count } = useCart();
   const { favorites, toggle } = useFavorites();
+  const buying = params.get("comprar");
+
+  // A galeria monta de novo ao voltar do checkout: reabre na foto que estava aberta.
+  // Depende só de `buying` de propósito; durante o swipe quem manda é o scroll.
+  useLayoutEffect(() => {
+    const el = track.current;
+    if (el) el.scrollLeft = image * el.clientWidth;
+  }, [buying]);
+
+  // No celular, a barra fixa de compra aparece quando os botões principais saem da tela
+  useEffect(() => {
+    const el = cta.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) =>
+      setCtaVisible(e.isIntersecting)
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [buying]);
+
   if (!p)
     return (
       <main className="not-found section-shell">
@@ -70,8 +125,36 @@ function ProductPage({ slug }: { slug?: string }) {
     setNotice(null);
     setParams({ comprar: variant.id, qtd: String(qty) });
   };
+  // Na barra fixa, sem tamanho escolhido, rola até os tamanhos e mostra o aviso
+  const quickBuy = () => {
+    if (!size)
+      sizeGroup.current?.scrollIntoView({ behavior: motion(), block: "center" });
+    buyNow();
+  };
+  // No celular as fotos ficam num carrossel: o botão rola até a foto
+  // e o próprio scroll atualiza qual vista está marcada
+  const show = (i: number) => {
+    const el = track.current;
+    el?.scrollTo({ left: i * el.clientWidth, behavior: motion() });
+  };
+  const onSwipe = () => {
+    const el = track.current;
+    if (el) setImage(Math.round(el.scrollLeft / el.clientWidth));
+  };
 
-  const buyVariant = p.variants.find((v) => v.id === params.get("comprar"));
+  // Cada cor do modelo é um produto da mesma família; a ordem fica fixa entre as páginas
+  const colorOptions = (
+    p.family ? products.filter((x) => x.family === p.family) : [p]
+  ).flatMap((x) => x.colors.map((c) => ({ color: c, slug: x.slug })));
+  const category = categories.find((c) => c.slug === p.category)?.name;
+  const discount = p.oldPrice
+    ? Math.round((1 - p.price / p.oldPrice) * 100)
+    : 0;
+  // A última palavra do nome (a cor, nos biquínis Maré) vai em itálico
+  const cut = p.name.lastIndexOf(" ");
+  const fav = favorites.includes(p.id);
+
+  const buyVariant = p.variants.find((v) => v.id === buying);
   if (buyVariant && buyVariant.stock > 0) {
     const quantity = Math.min(
       buyVariant.stock,
@@ -97,83 +180,149 @@ function ProductPage({ slug }: { slug?: string }) {
     );
   }
   return (
-    <main className="product-page section-shell">
-      <div className="product-topbar">
-        <div className="breadcrumbs">
-          <Link to="/">Início</Link> / <Link to="/catalogo">Coleção</Link> /{" "}
-          <span>{p.name}</span>
+    <main
+      className="pdp"
+      style={{ "--tint": swatches[color] ?? "var(--coral)" } as CSSProperties}
+    >
+      <header className="pdp-header">
+        <Link className="pdp-back" to="/catalogo" aria-label="Voltar à coleção">
+          <ChevronLeft size={18} />
+          <span>Coleção</span>
+        </Link>
+        <Link className="wordmark pdp-logo" to="/">
+          MARÉVIA<span>✳</span>
+        </Link>
+        <div className="pdp-header-actions">
+          <ThemeToggle />
+          <Link className="icon-button" to="/sacola" aria-label="Sacola">
+            <ShoppingBag />
+            <span className="count-badge">{count}</span>
+          </Link>
         </div>
-        <ThemeToggle />
-      </div>
-      <div className="product-detail">
-        <div className="product-gallery">
-          <div className="gallery-thumbs">
+      </header>
+
+      <div className="pdp-layout">
+        <section
+          className={`pdp-gallery ${p.images.length > 1 ? "" : "is-single"}`}
+          aria-label="Fotos do produto"
+        >
+          <div className="pdp-track" ref={track} onScroll={onSwipe}>
             {p.images.map((src, i) => (
-              <button
-                className={image === i ? "selected" : ""}
-                onClick={() => setImage(i)}
-                key={src + i}
-                aria-label={`Ver foto ${i + 1}`}
-              >
-                <img src={src} alt="" />
-              </button>
+              <figure key={src}>
+                <img
+                  src={src}
+                  alt={`${p.name}, ${viewName(i).toLowerCase()}`}
+                  draggable={false}
+                />
+                {p.images.length > 1 && <figcaption>{viewName(i)}</figcaption>}
+              </figure>
             ))}
           </div>
-          <div className="gallery-main">
-            <img src={p.images[image]} alt={p.name} />
-            <button
-              className={`gallery-heart ${
-                favorites.includes(p.id) ? "active" : ""
-              }`}
-              onClick={() => toggle(p.id)}
-              aria-label="Favoritar produto"
-            >
-              <Heart
-                fill={favorites.includes(p.id) ? "currentColor" : "none"}
-              />
-            </button>
-          </div>
-        </div>
-        <div className="product-purchase">
-          <span className="eyebrow">MARÉVIA · MODA PRAIA</span>
-          <h1>
-            {p.name}
-            <em>.</em>
-          </h1>
-          <div className="detail-price">
-            {p.oldPrice && <del>{money(p.oldPrice)}</del>}
-            <strong>{money(p.price)}</strong>
-          </div>
-          <p className="installments">
-            Consulte as opções de pagamento no checkout.
-          </p>
-          <p className="detail-description">{p.description}</p>
-          <div className="option-group">
-            <div className="option-heading">
-              <strong>Cor</strong>
-              <span>{color}</span>
-            </div>
-            <div className="color-options">
-              {p.colors.map((c) => (
+          {p.badge && <span className="pdp-badge">{p.badge}</span>}
+          <button
+            className={`pdp-heart ${fav ? "active" : ""}`}
+            onClick={() => toggle(p.id)}
+            aria-label={fav ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            aria-pressed={fav}
+          >
+            <Heart size={19} fill={fav ? "currentColor" : "none"} />
+          </button>
+          {p.images.length > 1 && (
+            <div className="pdp-views" role="group" aria-label="Escolher foto">
+              {p.images.map((src, i) => (
                 <button
-                  key={c}
-                  className={color === c ? "selected" : ""}
-                  onClick={() => {
-                    setColor(c);
-                    setNotice(null);
-                  }}
+                  key={src}
+                  aria-pressed={image === i}
+                  onClick={() => show(i)}
                 >
-                  {c}
+                  {viewName(i)}
                 </button>
               ))}
             </div>
+          )}
+        </section>
+
+        <section className="pdp-info">
+          <span className="pdp-eyebrow">
+            <span aria-hidden="true">✳</span> {category ?? "Moda praia"}
+          </span>
+          <h1 className="pdp-title">
+            {cut > 0 ? (
+              <>
+                {p.name.slice(0, cut)} <em>{p.name.slice(cut + 1)}</em>
+              </>
+            ) : (
+              p.name
+            )}
+          </h1>
+          <div className="pdp-price">
+            <strong>{money(p.price)}</strong>
+            {discount > 0 && (
+              <>
+                <del>{money(p.oldPrice!)}</del>
+                <span className="pdp-off">-{discount}%</span>
+              </>
+            )}
           </div>
-          <div className="option-group">
-            <div className="option-heading">
-              <strong>Tamanho</strong>
-              <Link to="/tabela-de-medidas">Guia de medidas ↗</Link>
+          <p className="pdp-pay">
+            <CreditCard size={15} /> Pix ou cartão de crédito no checkout
+          </p>
+          <p className="pdp-description">{p.description}</p>
+
+          <div className="pdp-option">
+            <div className="pdp-option-head">
+              <strong>
+                Cor: <span>{color}</span>
+              </strong>
+              {colorOptions.length > 1 && (
+                <small>{colorOptions.length} cores</small>
+              )}
             </div>
-            <div className="size-options">
+            <div className="pdp-swatches">
+              {colorOptions.map((o) => {
+                const style = {
+                  "--swatch": swatches[o.color] ?? "var(--line-strong)",
+                } as CSSProperties;
+                // Cor de outro produto da família: troca de página, levando tamanho e foto
+                return o.slug === p.slug ? (
+                  <button
+                    key={o.slug + o.color}
+                    className="pdp-swatch"
+                    style={style}
+                    title={o.color}
+                    aria-label={o.color}
+                    aria-pressed={o.color === color}
+                    onClick={() => {
+                      setColor(o.color);
+                      setNotice(null);
+                    }}
+                  />
+                ) : (
+                  <Link
+                    key={o.slug + o.color}
+                    className="pdp-swatch"
+                    style={style}
+                    title={o.color}
+                    aria-label={o.color}
+                    to={`/produto/${o.slug}`}
+                    state={{ size, view: image }}
+                    replace
+                  />
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="pdp-option" ref={sizeGroup}>
+            <div className="pdp-option-head">
+              <strong>
+                Tamanho{size && <span>: {size}</span>}
+              </strong>
+              <Link to="/tabela-de-medidas">
+                <Ruler size={14} /> Guia de medidas
+              </Link>
+            </div>
+            <div className="pdp-sizes">
               {p.sizes.map((s) => {
                 const available = p.variants.some(
                   (v) => v.size === s && v.color === color && v.stock > 0
@@ -182,7 +331,6 @@ function ProductPage({ slug }: { slug?: string }) {
                   <button
                     key={s}
                     disabled={!available}
-                    className={size === s ? "selected" : ""}
                     aria-pressed={size === s}
                     onClick={() => {
                       setSize(s);
@@ -195,9 +343,10 @@ function ProductPage({ slug }: { slug?: string }) {
               })}
             </div>
           </div>
-          <div className="quantity-row">
+
+          <div className="pdp-qty">
             <strong>Quantidade</strong>
-            <div className="quantity-control">
+            <div className="pdp-stepper">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
                 aria-label="Diminuir"
@@ -213,6 +362,7 @@ function ProductPage({ slug }: { slug?: string }) {
               </button>
             </div>
           </div>
+
           <div aria-live="polite">
             {notice && (
               <p className={`inline-notice ${notice.ok ? "" : "is-error"}`}>
@@ -222,30 +372,44 @@ function ProductPage({ slug }: { slug?: string }) {
               </p>
             )}
           </div>
-          <button className="button button-dark add-button" onClick={buyNow}>
-            COMPRAR AGORA
-          </button>
-          <button className="button button-outline add-button" onClick={add}>
-            <ShoppingBag size={17} /> ADICIONAR À SACOLA
-          </button>
-          <div className="shipping-note">
-            <Truck size={20} />
-            <div>
-              <strong>Entrega para todo o Brasil</strong>
-              <p>
-                O prazo e o valor do frete serão informados conforme a
-                configuração de entrega no checkout.
-              </p>
-            </div>
+
+          <div className="pdp-cta" ref={cta}>
+            <button className="pdp-buy" onClick={buyNow}>
+              COMPRAR AGORA
+            </button>
+            <button className="pdp-add" onClick={add}>
+              <ShoppingBag size={17} /> ADICIONAR À SACOLA
+            </button>
           </div>
-          <details className="product-accordion">
+
+          <ul className="pdp-perks">
+            <li>
+              <Truck size={19} />
+              <div>
+                <strong>Entrega para todo o Brasil</strong>
+                <p>Prazo e valor do frete aparecem no checkout.</p>
+              </div>
+            </li>
+            <li>
+              <RotateCcw size={19} />
+              <div>
+                <strong>Trocas e devoluções</strong>
+                <p>
+                  Veja como funciona na nossa{" "}
+                  <Link to="/trocas-e-devolucoes">política de trocas</Link>.
+                </p>
+              </div>
+            </li>
+          </ul>
+
+          <details className="pdp-accordion">
             <summary>Descrição e cuidados</summary>
             <p>
               {p.description} Para maior durabilidade, siga as instruções de
               cuidado da etiqueta do produto real.
             </p>
           </details>
-          <details className="product-accordion">
+          <details className="pdp-accordion">
             <summary>Trocas e devoluções</summary>
             <p>
               Consulte nossa{" "}
@@ -255,7 +419,23 @@ function ProductPage({ slug }: { slug?: string }) {
               . Configure os termos oficiais antes de iniciar as vendas.
             </p>
           </details>
+        </section>
+      </div>
+
+      {/* Barra fixa do celular: só aparece quando os botões de compra saem da tela */}
+      <div
+        className={`pdp-sticky ${ctaVisible ? "" : "is-visible"}`}
+        inert={ctaVisible}
+      >
+        <span className="pdp-sticky-dot" aria-hidden="true" />
+        <div>
+          <strong>{p.name}</strong>
+          <span>
+            {money(p.price)}
+            {size && ` · Tam. ${size}`}
+          </span>
         </div>
+        <button onClick={quickBuy}>COMPRAR</button>
       </div>
     </main>
   );
