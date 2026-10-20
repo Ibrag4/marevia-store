@@ -13,6 +13,7 @@ import { money, products } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import CheckoutView from "../components/CheckoutView";
+import ThemeToggle from "../components/ThemeToggle";
 
 // A key reinicia o estado (cor, tamanho, checkout) ao trocar de produto
 export default function ProductRoute() {
@@ -97,9 +98,12 @@ function ProductPage({ slug }: { slug?: string }) {
   }
   return (
     <main className="product-page section-shell">
-      <div className="breadcrumbs">
-        <Link to="/">Início</Link> / <Link to="/catalogo">Coleção</Link> /{" "}
-        <span>{p.name}</span>
+      <div className="product-topbar">
+        <div className="breadcrumbs">
+          <Link to="/">Início</Link> / <Link to="/catalogo">Coleção</Link> /{" "}
+          <span>{p.name}</span>
+        </div>
+        <ThemeToggle />
       </div>
       <div className="product-detail">
         <div className="product-gallery">

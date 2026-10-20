@@ -15,13 +15,12 @@ import {
   CircleAlert,
   LoaderCircle,
   LockKeyhole,
-  Moon,
   Search,
   ShoppingBag,
-  Sun,
   Tag,
 } from "lucide-react";
 import { money, products } from "../data/products";
+import ThemeToggle from "./ThemeToggle";
 
 export type CheckoutLine = {
   productId: string;
@@ -330,23 +329,7 @@ async function lookupCep(
   };
 }
 
-type Theme = "light" | "dark";
-const THEME_KEY = "marevia-checkout-theme";
-
-// Usa a escolha salva; sem ela, segue o modo do aparelho
-const readTheme = (): Theme => {
-  try {
-    const saved = localStorage.getItem(THEME_KEY);
-    if (saved === "light" || saved === "dark") return saved;
-  } catch {
-    // Sem armazenamento (aba anônima): segue o aparelho
-  }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-};
-
-// Moldura do checkout: cabeçalho enxuto e alternância entre modo claro e escuro
+// Moldura do checkout: cabeçalho enxuto, com o mesmo botão de tema do resto do site
 export function CheckoutShell({
   backTo,
   backLabel,
@@ -356,37 +339,15 @@ export function CheckoutShell({
   backLabel: string;
   children: ReactNode;
 }) {
-  const [theme, setTheme] = useState(readTheme);
-  const dark = theme === "dark";
-  const toggleLabel = dark ? "Ativar modo claro" : "Ativar modo escuro";
-
-  const toggle = () => {
-    const next = dark ? "light" : "dark";
-    setTheme(next);
-    try {
-      localStorage.setItem(THEME_KEY, next);
-    } catch {
-      // Sem armazenamento: vale só nesta visita
-    }
-  };
-
   return (
-    <div className={`ck ${dark ? "is-dark" : ""}`}>
+    <div className="ck">
       <header className="ck-header">
         <div>
           <Link to="/" className="wordmark">
             MARÉVIA<span>✳</span>
           </Link>
           <div className="ck-header-actions">
-            <button
-              type="button"
-              className="ck-icon"
-              aria-label={toggleLabel}
-              title={toggleLabel}
-              onClick={toggle}
-            >
-              {dark ? <Sun /> : <Moon />}
-            </button>
+            <ThemeToggle className="ck-icon" />
             <Link
               to={backTo}
               className="ck-bag"

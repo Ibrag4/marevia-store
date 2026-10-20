@@ -9,6 +9,19 @@
       content="MARÉVIA: biquínis e maiôs em cores e estampas para praia e piscina."
     />
     <title>MARÉVIA — Biquínis e Maiôs</title>
+    <script>
+      // Aplica o tema antes da pintura, para a página não piscar clara.
+      // Usa a escolha salva; sem ela, segue o modo do aparelho.
+      (function () {
+        var t;
+        try {
+          t = localStorage.getItem("marevia-theme");
+        } catch (e) {}
+        if (t !== "light" && t !== "dark")
+          t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
