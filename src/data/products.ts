@@ -27,7 +27,7 @@ export type Product = {
 // O fallback permite importar este arquivo no vite.config (Node), onde import.meta.env não existe.
 const BASE = import.meta.env?.BASE_URL ?? "/";
 
-// Fotos de referência para o protótipo. Troque pelas fotos reais dos produtos antes de vender.
+// Imagens da coleção.
 
 const pics = {
   floral:
@@ -246,9 +246,10 @@ export const money = (value: number) =>
 export const expressShipping = {
   name: "Frete expresso",
   days: "2 a 5 dias úteis",
-  price: 14.9,
+  price: 0,
 };
 
-// Cada compra é um kit com 2 biquínis no mesmo tamanho: a cor da página + a 2ª cor escolhida
+export const SINGLE_BIKINI_PRICE = 69.9;
+export const TWO_BIKINI_UNIT_PRICE = 59.9;
 export const KIT_PIECES = 2;
 export type KitPair = { productId: string; variantId: string; color: string };

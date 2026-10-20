@@ -9,7 +9,6 @@ import {
   Minus,
   Plus,
   RotateCcw,
-  Ruler,
   ShoppingBag,
   Truck,
 } from "lucide-react";
@@ -25,6 +24,8 @@ import {
   KIT_PIECES,
   money,
   products,
+  SINGLE_BIKINI_PRICE,
+  TWO_BIKINI_UNIT_PRICE,
   swatches,
 } from "../data/products";
 import type { Product } from "../data/products";
@@ -129,12 +130,13 @@ function ProductPage({ slug }: { slug?: string }) {
       </main>
     );
   const variant = p.variants.find((v) => v.size === size && v.color === color);
-  const pairPiece = size ? pieceOf(p, pairColor, size) : undefined;
-  const pair = pairPiece && {
+  const pairPiece = size && pairColor ? pieceOf(p, pairColor, size) : undefined;
+  const wantsPair = Boolean(pairColor);
+  const pair = wantsPair && pairPiece ? {
     productId: pairPiece.product.id,
     variantId: pairPiece.variant.id,
     color: pairColor,
-  };
+  } : undefined;
   const valid = () => {
     if (!size) {
       setNotice({ ok: false, text: "Escolha seu tamanho para continuar." });
@@ -143,8 +145,7 @@ function ProductPage({ slug }: { slug?: string }) {
     if (
       !variant ||
       variant.stock < qty ||
-      !pairPiece ||
-      pairPiece.variant.stock < qty
+      (wantsPair && (!pairPiece || pairPiece.variant.stock < qty))
     ) {
       setNotice({
         ok: false,
@@ -162,11 +163,11 @@ function ProductPage({ slug }: { slug?: string }) {
   // Compra direta: o checkout abre na própria página (?comprar=variante&par=2ª peça&qtd=n),
   // sem passar pela sacola. O botão voltar do navegador retorna ao produto.
   const buyNow = () => {
-    if (!valid() || !variant || !pairPiece) return;
+    if (!valid() || !variant || (wantsPair && !pairPiece)) return;
     setNotice(null);
     setParams({
       comprar: variant.id,
-      par: pairPiece.variant.id,
+      ...(pairPiece ? { par: pairPiece.variant.id } : {}),
       qtd: String(qty),
     });
   };
@@ -195,27 +196,26 @@ function ProductPage({ slug }: { slug?: string }) {
   const pairOptions = colorOptions
     .map((o) => o.color)
     .filter((c) => c !== color);
-  if (!pairOptions.length) pairOptions.push(color);
   const category = categories.find((c) => c.slug === p.category)?.name;
-  const discount = p.oldPrice
-    ? Math.round((1 - p.price / p.oldPrice) * 100)
-    : 0;
   // A última palavra do nome (a cor, nos biquínis Maré) vai em itálico
   const cut = p.name.lastIndexOf(" ");
   const fav = favorites.includes(p.id);
+  const unitPrice = wantsPair ? TWO_BIKINI_UNIT_PRICE : SINGLE_BIKINI_PRICE;
+  const purchasePrice = unitPrice * (wantsPair ? KIT_PIECES : 1);
 
   const buyVariant = p.variants.find((v) => v.id === buying);
-  const buyPair =
+  const buyPair = params.get("par") ? (
     buyVariant &&
     familyOf(p)
       .flatMap((product) => product.variants.map((variant) => ({ product, variant })))
       .find(
         (o) => o.variant.id === params.get("par") && o.variant.size === buyVariant.size
-      );
-  if (buyVariant && buyVariant.stock > 0 && buyPair && buyPair.variant.stock > 0) {
+      )
+  ) : undefined;
+  if (buyVariant && buyVariant.stock > 0 && (!params.get("par") || (buyPair && buyPair.variant.stock > 0))) {
     const quantity = Math.min(
       buyVariant.stock,
-      buyPair.variant.stock,
+      buyPair?.variant.stock ?? buyVariant.stock,
       Math.max(1, Math.floor(Number(params.get("qtd"))) || 1)
     );
     return (
@@ -226,15 +226,15 @@ function ProductPage({ slug }: { slug?: string }) {
             variantId: buyVariant.id,
             name: p.name,
             image: p.image,
-            price: p.price,
+            price: params.get("par") ? TWO_BIKINI_UNIT_PRICE * KIT_PIECES : SINGLE_BIKINI_PRICE,
             size: buyVariant.size,
             color: buyVariant.color,
             quantity,
-            pair: {
+            ...(buyPair ? { pair: {
               productId: buyPair.product.id,
               variantId: buyPair.variant.id,
               color: buyPair.variant.color,
-            },
+            } } : {}),
           },
         ]}
         backTo={`/produto/${p.slug}`}
@@ -314,20 +314,18 @@ function ProductPage({ slug }: { slug?: string }) {
               p.name
             )}
           </h1>
-          <span className="pdp-kit-tag">
-            Kit com {KIT_PIECES} biquínis · escolha 2 cores
-          </span>
+          <span className="pdp-kit-tag">Leve 2 e pague R$ 59,90 cada</span>
           <div className="pdp-price">
-            <strong>{money(p.price)}</strong>
-            {discount > 0 && (
+            <strong>{money(purchasePrice)}</strong>
+            {!wantsPair ? <span className="pdp-off">1 biquíni</span> : (
               <>
-                <del>{money(p.oldPrice!)}</del>
-                <span className="pdp-off">-{discount}%</span>
+                <del>{money(SINGLE_BIKINI_PRICE * KIT_PIECES)}</del>
+                <span className="pdp-off">2 biquínis</span>
               </>
             )}
           </div>
           <p className="pdp-pay">
-            Sai {money(p.price / KIT_PIECES)} cada peça
+            {wantsPair ? `${money(TWO_BIKINI_UNIT_PRICE)} cada biquíni` : "1 biquíni por R$ 69,90"}
           </p>
           <p className="pdp-pay">
             <CreditCard size={15} /> Pix ou cartão de crédito no checkout
@@ -387,10 +385,19 @@ function ProductPage({ slug }: { slug?: string }) {
           <div className="pdp-option">
             <div className="pdp-option-head">
               <strong>
-                2ª cor do kit: <span>{pairColor}</span>
+                2ª cor (opcional): <span>{pairColor || "não selecionada"}</span>
               </strong>
             </div>
             <div className="pdp-swatches">
+              <button
+                type="button"
+                className={`pdp-swatch pdp-no-pair ${!pairColor ? "is-selected" : ""}`}
+                aria-label="Sem segunda cor"
+                aria-pressed={!pairColor}
+                onClick={() => { setPairColor(""); setNotice(null); }}
+              >
+                —
+              </button>
               {pairOptions.map((c) => (
                 <button
                   key={c}
@@ -421,7 +428,7 @@ function ProductPage({ slug }: { slug?: string }) {
                 style={{ background: swatches[pairColor] }}
                 aria-hidden="true"
               />
-              Seu kit: {color} + {pairColor}
+              {pairColor ? `Seu kit: ${color} + ${pairColor}` : `Sua escolha: ${color}`}
               {size && ` · Tam. ${size}`}
             </p>
           </div>
@@ -431,9 +438,6 @@ function ProductPage({ slug }: { slug?: string }) {
               <strong>
                 Tamanho{size && <span>: {size}</span>}
               </strong>
-              <Link to="/tabela-de-medidas">
-                <Ruler size={14} /> Guia de medidas
-              </Link>
             </div>
             <div className="pdp-sizes">
               {p.sizes.map((s) => {
@@ -458,7 +462,7 @@ function ProductPage({ slug }: { slug?: string }) {
           </div>
 
           <div className="pdp-qty">
-            <strong>Quantidade de kits</strong>
+            <strong>Quantidade</strong>
             <div className="pdp-stepper">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
@@ -491,7 +495,7 @@ function ProductPage({ slug }: { slug?: string }) {
               COMPRAR AGORA
             </button>
             <button className="pdp-add" onClick={add}>
-              <ShoppingBag size={17} /> ADICIONAR KIT À SACOLA
+              <ShoppingBag size={17} /> ADICIONAR À SACOLA
             </button>
           </div>
 
@@ -499,10 +503,8 @@ function ProductPage({ slug }: { slug?: string }) {
             <li>
               <Truck size={19} />
               <div>
-                <strong>
-                  {expressShipping.name} · {expressShipping.days}
-                </strong>
-                <p>{money(expressShipping.price)} para todo o Brasil.</p>
+                <strong>Frete grátis · {expressShipping.days}</strong>
+                <p>Entrega para todo o Brasil.</p>
               </div>
             </li>
             <li>
@@ -531,7 +533,6 @@ function ProductPage({ slug }: { slug?: string }) {
               <Link to="/trocas-e-devolucoes">
                 política de trocas e devoluções
               </Link>
-              . Configure os termos oficiais antes de iniciar as vendas.
             </p>
           </details>
         </section>
@@ -546,7 +547,7 @@ function ProductPage({ slug }: { slug?: string }) {
         <div>
           <strong>{p.name}</strong>
           <span>
-            {money(p.price)} · kit {color} + {pairColor}
+            {money(purchasePrice)} · {pairColor ? `kit ${color} + ${pairColor}` : color}
             {size && ` · ${size}`}
           </span>
         </div>

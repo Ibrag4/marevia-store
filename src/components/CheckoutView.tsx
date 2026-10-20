@@ -36,7 +36,6 @@ export type CheckoutLine = {
 };
 
 // Endereço do backend que cria o pagamento no Mercado Pago (ex.: /api/checkout).
-// Sem ele, o checkout roda em modo de demonstração e não cria pedidos.
 const ENDPOINT = import.meta.env.VITE_CHECKOUT_ENDPOINT;
 
 // Frete com valor e prazo sempre definidos (nunca "a combinar")
@@ -345,9 +344,6 @@ export function CheckoutShell({
     <div className="ck">
       <header className="ck-header">
         <div>
-          <Link to="/" className="wordmark">
-            MARÉVIA<span>✳</span>
-          </Link>
           <div className="ck-header-actions">
             <Link
               to={backTo}
@@ -469,8 +465,8 @@ export default function CheckoutView({ items, backTo, backLabel }: Props) {
     }
     if (!ENDPOINT) {
       setStatus({
-        kind: "demo",
-        text: "Checkout em modo de demonstração: nenhum pedido foi criado e nenhuma cobrança foi feita.",
+        kind: "error",
+        text: "Não foi possível concluir o pedido agora. Tente novamente mais tarde.",
       });
       return;
     }
