@@ -14,7 +14,12 @@
     --paper-soft: rgba(239, 231, 216, .6);
     --ink: #28251f;
     --text-soft: #625d53;
-    --coral: #d95d42;
+    --coral: #b8475f;
+    --rose: #b8475f;
+    --rose-ink: #fff;
+    --blush: #f7e6e1;
+    --blush-strong: #efd2cb;
+    --pill: 999px;
     --orange: #e87d45;
     --green: #52684b;
     --line: #dcd3c5;
@@ -24,8 +29,8 @@
     --img-bg: #e4d8c6;
     --selected: #eee5d8;
     --field: #fffaf2;
-    --sage: #d8dfce;
-    --sand: #f0e4d2;
+    --sage: #f4e3df;
+    --sand: #f8ebe6;
     --chip: rgba(248, 244, 236, .92);
     --warn-bg: #f4dfc7;
     --warn-text: #69402d;
@@ -42,6 +47,11 @@
     --ink: #f1ebe1;
     --text-soft: #c9c1b4;
     --green: #93b487;
+    --coral: #ec94a8;
+    --rose: #ec94a8;
+    --rose-ink: #2a1418;
+    --blush: #2a1f1f;
+    --blush-strong: #3a2a2a;
     --line: #3a352e;
     --line-soft: rgba(241, 235, 225, .08);
     --line-strong: #4a443b;
@@ -49,8 +59,8 @@
     --img-bg: #2a2621;
     --selected: #2e2a24;
     --field: #1d1b18;
-    --sage: #1e231c;
-    --sand: #1f1b17;
+    --sage: #241b1c;
+    --sand: #221a1b;
     --chip: rgba(22, 20, 18, .85);
     --warn-bg: #3a2b1a;
     --warn-text: #f0cfa0;
@@ -93,8 +103,8 @@ img {
     align-items: center;
     justify-content: center;
     gap: 12px;
-    background: #e9a35f;
-    color: #38291e;
+    background: var(--rose);
+    color: var(--rose-ink);
     font-size: 9px;
     letter-spacing: .17em;
     font-weight: 700
@@ -189,8 +199,8 @@ img {
     right: -4px;
     top: -5px;
     border-radius: 50%;
-    background: var(--coral);
-    color: #fff;
+    background: var(--rose);
+    color: var(--rose-ink);
     font-size: 9px;
     min-width: 15px;
     height: 15px;
@@ -208,7 +218,7 @@ img {
     position: relative;
     color: white;
     overflow: hidden;
-    background: #61796b
+    background: #c98a8f
 }
 
 .hero>img {
@@ -222,7 +232,7 @@ img {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(23, 35, 28, .53), rgba(23, 35, 28, .08) 72%), linear-gradient(0deg, rgba(23, 35, 28, .18), transparent 40%)
+    background: linear-gradient(90deg, rgba(58, 22, 34, .53), rgba(58, 22, 34, .08) 72%), linear-gradient(0deg, rgba(58, 22, 34, .18), transparent 40%)
 }
 
 .hero-copy {
@@ -242,7 +252,7 @@ img {
 }
 
 .eyebrow.light {
-    color: #f8d4a3
+    color: #f8cdd6
 }
 
 .hero h1,
@@ -270,7 +280,7 @@ img {
 .checkout-heading h1 em,
 .info-page h1 em {
     font-weight: 500;
-    color: #f1b57e
+    color: #f7c3ce
 }
 
 .hero-copy>p {
@@ -303,8 +313,8 @@ img {
 }
 
 .button-dark {
-    background: var(--coral);
-    color: white
+    background: var(--rose);
+    color: var(--rose-ink)
 }
 
 .button-outline {
@@ -362,7 +372,7 @@ img {
 
 .sun-doodle {
     position: absolute;
-    color: #e5a05d;
+    color: var(--rose);
     font-size: 48px;
     right: 19%;
     top: 35%
@@ -668,7 +678,7 @@ img {
     right: 11%;
     bottom: 10%;
     font-size: 60px;
-    color: #66805c;
+    color: var(--rose);
     transform: rotate(-25deg)
 }
 
@@ -697,7 +707,7 @@ img {
     right: 14%;
     top: 28%;
     font-size: 76px;
-    color: #e7b86f;
+    color: var(--rose);
     transform: rotate(12deg)
 }
 
@@ -750,7 +760,7 @@ img {
 }
 
 .footer {
-    background: #2c3429;
+    background: #3b1d27;
     color: #f8f4ec;
     padding: 60px 7% 22px
 }
@@ -773,7 +783,7 @@ img {
 }
 
 .footer .muted {
-    color: #c0c4b7
+    color: #e6c6cd
 }
 
 .footer h4 {
@@ -796,7 +806,7 @@ img {
 .newsletter {
     display: flex;
     width: 100%;
-    border-bottom: 1px solid #838b7d
+    border-bottom: 1px solid rgba(255, 255, 255, .35)
 }
 
 .newsletter input {
@@ -818,12 +828,12 @@ img {
 }
 
 .footer-bottom {
-    border-top: 1px solid #596053;
+    border-top: 1px solid rgba(255, 255, 255, .16);
     padding-top: 20px;
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    color: #c0c4b7;
+    color: #e6c6cd;
     font-size: 9px
 }
 
@@ -1610,7 +1620,7 @@ img {
     }
 
     .hero-overlay {
-        background: linear-gradient(90deg, rgba(23, 35, 28, .46), rgba(23, 35, 28, .02) 100%), linear-gradient(0deg, rgba(23, 35, 28, .25), transparent 50%)
+        background: linear-gradient(90deg, rgba(58, 22, 34, .46), rgba(58, 22, 34, .02) 100%), linear-gradient(0deg, rgba(58, 22, 34, .25), transparent 50%)
     }
 
     .hero-copy {
@@ -2219,10 +2229,10 @@ img {
    ======================================== */
 
 .ck {
-    --ck-accent: #c24f35;
-    --ck-accent-bg: #c24f35;
-    --ck-accent-hover: #a8432c;
-    --ck-tint: #fbf1ed;
+    --ck-accent: #b8475f;
+    --ck-accent-bg: #b8475f;
+    --ck-accent-hover: #9e3a50;
+    --ck-tint: #fbeff1;
     --ck-bg: #fff;
     --ck-text: #1a1a1a;
     --ck-field: #fff;
@@ -2248,8 +2258,8 @@ img {
 
 /* Modo escuro: o botão de pagar mantém o coral original para o texto branco seguir legível */
 [data-theme=dark] .ck {
-    --ck-accent: #ef8a74;
-    --ck-tint: #2b1e1a;
+    --ck-accent: #ec94a8;
+    --ck-tint: #2b1c20;
     --ck-bg: #141414;
     --ck-text: #f2f2f2;
     --ck-field: #1c1c1c;
@@ -2372,7 +2382,7 @@ img {
     height: 52px;
     padding: 21px 12px 6px;
     border: 1px solid var(--ck-border);
-    border-radius: 6px;
+    border-radius: 12px;
     background: var(--ck-field);
     color: var(--ck-text);
     font-size: 14px;
@@ -2452,7 +2462,7 @@ img {
 /* Opções de frete e pagamento */
 .ck-options {
     border: 1px solid var(--ck-border);
-    border-radius: 6px;
+    border-radius: 12px;
     overflow: hidden
 }
 
@@ -2537,7 +2547,7 @@ img {
 .ck-placeholder {
     margin: 0;
     padding: 16px;
-    border-radius: 6px;
+    border-radius: 12px;
     background: var(--ck-inset);
     font-size: 13px;
     color: var(--ck-muted)
@@ -2547,7 +2557,7 @@ img {
     width: 100%;
     min-height: 58px;
     border: 0;
-    border-radius: 6px;
+    border-radius: 12px;
     background: var(--ck-accent-bg);
     color: #fff;
     font-size: 16px;
@@ -2575,7 +2585,7 @@ img {
     align-items: flex-start;
     margin: 14px 0 0;
     padding: 13px 14px;
-    border-radius: 6px;
+    border-radius: 12px;
     font-size: 13px;
     line-height: 1.5
 }
@@ -2765,7 +2775,7 @@ img {
     height: 52px;
     padding: 0 18px;
     border: 1px solid var(--ck-border);
-    border-radius: 6px;
+    border-radius: 12px;
     background: var(--ck-field);
     color: var(--ck-text);
     font-size: 14px;
@@ -3015,11 +3025,6 @@ img {
 
 /* --tint vem da cor escolhida (definida no <main>) e colore só detalhes decorativos */
 .pdp {
-    --rose: #b8475f;
-    --rose-ink: #fff;
-    --blush: #f7e6e1;
-    --blush-strong: #efd2cb;
-    --pill: 999px;
     min-height: 100vh;
     background:
         radial-gradient(1100px 520px at 85% -10%, color-mix(in srgb, var(--tint) 12%, transparent), transparent 70%),
@@ -3028,12 +3033,6 @@ img {
     overflow-x: clip
 }
 
-:root[data-theme=dark] .pdp {
-    --rose: #ec94a8;
-    --rose-ink: #2a1418;
-    --blush: #2a1f1f;
-    --blush-strong: #3a2a2a
-}
 
 .pdp-header {
     display: grid;
@@ -3740,4 +3739,123 @@ img {
         padding: 0 16px;
         letter-spacing: .08em
     }
+}
+
+/* ========================================
+   MARÉVIA — IDENTIDADE (todas as páginas)
+   Rosa, formas arredondadas e itálico nos títulos, igual à página do produto
+   ======================================== */
+
+.hero h1 em,
+.section-heading h2 em,
+.intro em,
+.editorial-copy h2 em,
+.manifesto h2 em,
+.social-strip h2 em,
+.catalog-heading h1 em,
+.checkout-heading h1 em,
+.info-page h1 em {
+    font-style: italic
+}
+
+.catalog-heading h1 em,
+.info-page h1 em,
+.section-heading h2 em,
+.manifesto h2 em,
+.social-strip h2 em,
+.intro em {
+    color: var(--rose)
+}
+
+.button,
+.quick-view,
+.product-badge,
+.quantity-control,
+.newsletter,
+.ck-pay {
+    border-radius: var(--pill)
+}
+
+.button-outline {
+    border-color: var(--ink)
+}
+
+.button-outline:hover {
+    background: var(--blush)
+}
+
+.button-dark {
+    box-shadow: 0 10px 24px -12px var(--rose)
+}
+
+.product-image-wrap,
+.category-card,
+.social-tiles a,
+.editorial-image {
+    border-radius: 22px;
+    overflow: hidden
+}
+
+.cart-item>a img,
+.checkout-item img {
+    border-radius: 14px
+}
+
+.order-summary,
+.checkout-summary {
+    border-radius: 22px;
+    background: var(--blush)
+}
+
+.product-badge {
+    background: var(--rose);
+    color: var(--rose-ink);
+    padding: 6px 12px;
+    font-weight: 700;
+    text-transform: uppercase
+}
+
+.quick-view {
+    bottom: 12px;
+    left: 12px;
+    right: 12px
+}
+
+.product-name:hover,
+.footer-top>div>a:not(.wordmark):hover {
+    color: var(--rose)
+}
+
+.product-card .price-block strong {
+    font-size: 13px
+}
+
+.header-search {
+    border: 1px solid var(--line);
+    border-radius: var(--pill);
+    padding: 7px 14px
+}
+
+.newsletter {
+    border: 1px solid rgba(255, 255, 255, .35);
+    padding: 0 6px 0 16px
+}
+
+.size-table {
+    border-radius: 18px;
+    overflow: hidden
+}
+
+.size-table th {
+    background: var(--blush)
+}
+
+.empty-state>span,
+.not-found>span {
+    color: var(--rose)
+}
+
+:focus-visible {
+    outline: 2px solid var(--rose);
+    outline-offset: 3px
 }
