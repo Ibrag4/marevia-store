@@ -79,15 +79,8 @@ function ProductPage({ slug }: { slug?: string }) {
     return s && available ? s : "";
   });
   const [color, setColor] = useState(p?.colors[0] || "");
-  // 2ª cor do kit: começa na próxima cor do modelo, diferente da cor da página
-  const [pairColor, setPairColor] = useState(() => {
-    if (!p) return "";
-    const others = familyOf(p)
-      .flatMap((x) => x.colors)
-      .filter((c) => c !== p.colors[0]);
-    if (carried?.pair && others.includes(carried.pair)) return carried.pair;
-    return others[0] ?? p.colors[0];
-  });
+  // A segunda cor só é selecionada quando a pessoa escolhe levar dois biquínis.
+  const [pairColor, setPairColor] = useState(() => carried?.pair ?? "");
   const [qty, setQty] = useState(1);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(
     null
