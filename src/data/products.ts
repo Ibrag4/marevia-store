@@ -73,12 +73,12 @@ export const products: Product[] = [
     name: "Biquíni Maré Vermelha",
     category: "biquinis",
     family: "mare",
-    price: 69.9,
+    price: 59.9,
     oldPrice: 159.9,
     description:
       "Um vermelho marcante para acompanhar seus dias de sol. O Biquíni Maré Vermelha combina estilo, leveza e personalidade para curtir a praia ou a piscina.",
     image: `${BASE}assets/vermelho.jpg`,
-    images: [`${BASE}assets/vermelho.jpg`],
+    images: [`${BASE}assets/vermelho.jpg`, `${BASE}assets/vermelho-costas.jpg`],
     colors: ["Vermelho"],
     sizes,
     variants: mkVariants(["Vermelho"]),
@@ -92,7 +92,7 @@ export const products: Product[] = [
     name: "Biquíni Maré Amarelo",
     category: "biquinis",
     family: "mare",
-    price: 69.9,
+    price: 59.9,
     oldPrice: 159.9,
     description:
       "Um amarelo iluminado para trazer ainda mais cor aos dias de verão. O Biquíni Maré Amarelo é leve, versátil e perfeito para aproveitar o sol.",
@@ -111,7 +111,7 @@ export const products: Product[] = [
     name: "Biquíni Maré Azul",
     category: "biquinis",
     family: "mare",
-    price: 69.9,
+    price: 59.9,
     oldPrice: 159.9,
     description:
       "Inspirado nos tons do mar, o Biquíni Maré Azul combina frescor e simplicidade em uma peça perfeita para os dias de praia e piscina.",
@@ -130,7 +130,7 @@ export const products: Product[] = [
     name: "Biquíni Maré Marrom",
     category: "biquinis",
     family: "mare",
-    price: 69.9,
+    price: 59.9,
     oldPrice: 159.9,
     description:
       "Em um tom terroso e moderno, o Biquíni Maré Marrom é uma escolha versátil para compor looks de praia com personalidade.",
@@ -149,7 +149,7 @@ export const products: Product[] = [
     name: "Biquíni Maré Preto",
     category: "biquinis",
     family: "mare",
-    price: 69.9,
+    price: 59.9,
     oldPrice: 159.9,
     description:
       "Clássico e fácil de combinar, o Biquíni Maré Preto é ideal para quem gosta de uma peça atemporal que nunca sai de moda.",
@@ -168,7 +168,7 @@ export const products: Product[] = [
     name: "Biquíni Maré Rosa",
     category: "biquinis",
     family: "mare",
-    price: 69.9,
+    price: 59.9,
     oldPrice: 159.9,
     description:
       "Delicado e cheio de cor, o Biquíni Maré Rosa traz um toque descontraído para os dias de sol, praia e piscina.",
@@ -187,7 +187,7 @@ export const products: Product[] = [
     name: "Biquíni Maré Verde",
     category: "biquinis",
     family: "mare",
-    price: 69.9,
+    price: 59.9,
     oldPrice: 159.9,
     description:
       "Com um tom inspirado na natureza, o Biquíni Maré Verde é uma opção fresca e versátil para aproveitar a temporada de verão.",
@@ -219,7 +219,7 @@ export const categories = [
 
 // Cor da bolinha de cada cor na página do produto
 export const swatches: Record<string, string> = {
-  Vermelho: "#b40723",
+  Vermelho: "#c90533",
   Amarelo: "#e9b95b",
   Azul: "#1a2350",
   Marrom: "#89544d",
@@ -241,3 +241,14 @@ export const money = (value: number) =>
     style: "currency",
     currency: "BRL",
   });
+
+// Frete único para todo o Brasil, mostrado na página do produto, na sacola e no checkout
+export const expressShipping = {
+  name: "Frete expresso",
+  days: "2 a 5 dias úteis",
+  price: 14.9,
+};
+
+// Cada compra é um kit com 2 biquínis no mesmo tamanho: a cor da página + a 2ª cor escolhida
+export const KIT_PIECES = 2;
+export type KitPair = { productId: string; variantId: string; color: string };

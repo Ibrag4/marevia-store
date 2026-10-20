@@ -19,9 +19,11 @@ import {
   ShoppingBag,
   Tag,
 } from "lucide-react";
-import { money, products } from "../data/products";
+import { expressShipping, money, products } from "../data/products";
+import type { KitPair } from "../data/products";
 import ThemeToggle from "./ThemeToggle";
 
+// Cada linha é um kit: a peça principal + a 2ª cor (pair), no mesmo tamanho
 export type CheckoutLine = {
   productId: string;
   variantId: string;
@@ -31,24 +33,25 @@ export type CheckoutLine = {
   size: string;
   color: string;
   quantity: number;
+  pair?: KitPair;
 };
 
 // Endereço do backend que cria o pagamento no Mercado Pago (ex.: /api/checkout).
 // Sem ele, o checkout roda em modo de demonstração e não cria pedidos.
 const ENDPOINT = import.meta.env.VITE_CHECKOUT_ENDPOINT;
 
-// Configure as opções reais de entrega antes de vender. price: null = valor confirmado após o pedido.
+// Frete com valor e prazo sempre definidos (nunca "a combinar")
 const SHIPPING: {
   id: string;
   name: string;
   detail: string;
-  price: number | null;
+  price: number;
 }[] = [
   {
-    id: "padrao",
-    name: "Entrega padrão",
-    detail: "Prazo confirmado por e-mail após o pedido",
-    price: null,
+    id: "expresso",
+    name: expressShipping.name,
+    detail: expressShipping.days,
+    price: expressShipping.price,
   },
 ];
 
@@ -124,8 +127,8 @@ const isMercadoPago = (url: string) => {
   }
 };
 
-const shippingLabel = (price: number | null) =>
-  price === null ? "A calcular" : price === 0 ? "Grátis" : money(price);
+const shippingLabel = (price: number) =>
+  price === 0 ? "Grátis" : money(price);
 
 const emptyForm = {
   email: "",
@@ -387,8 +390,7 @@ export default function CheckoutView({ items, backTo, backLabel }: Props) {
     return old && old > i.price ? s + (old - i.price) * i.quantity : s;
   }, 0);
   const method = SHIPPING.find((s) => s.id === shipping) ?? SHIPPING[0];
-  const hasAddress = digits(form.cep).length === 8;
-  const total = subtotal + (hasAddress && method.price ? method.price : 0);
+  const total = subtotal + method.price;
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -485,6 +487,8 @@ export default function CheckoutView({ items, backTo, backLabel }: Props) {
           items: items.map((i) => ({
             productId: i.productId,
             variantId: i.variantId,
+            pairProductId: i.pair?.productId,
+            pairVariantId: i.pair?.variantId,
             quantity: i.quantity,
           })),
           customer: { email, firstName, lastName, cpf, phone, newsletter },
@@ -672,7 +676,6 @@ export default function CheckoutView({ items, backTo, backLabel }: Props) {
             </section>
             <section className="ck-section">
               <h2>Frete</h2>
-              {hasAddress ? (
                 <div className="ck-options" role="radiogroup">
                   {SHIPPING.map((s) => (
                     <label
@@ -695,11 +698,6 @@ export default function CheckoutView({ items, backTo, backLabel }: Props) {
                     </label>
                   ))}
                 </div>
-              ) : (
-                <p className="ck-placeholder">
-                  Insira seu CEP para ver as opções de frete.
-                </p>
-              )}
             </section>
 
             <section className="ck-section">
@@ -781,7 +779,7 @@ export default function CheckoutView({ items, backTo, backLabel }: Props) {
           <div className="ck-summary-inner">
             <ul className="ck-lines">
               {items.map((i) => (
-                <li key={i.productId + i.variantId}>
+                <li key={i.productId + i.variantId + (i.pair?.variantId ?? "")}>
                   <div className="ck-thumb">
                     <img src={i.image} alt="" />
                     <span aria-label={`Quantidade: ${i.quantity}`}>
@@ -791,7 +789,8 @@ export default function CheckoutView({ items, backTo, backLabel }: Props) {
                   <div className="ck-line-info">
                     <strong>{i.name}</strong>
                     <small>
-                      {i.color} / {i.size}
+                      Kit 2 peças: {i.color}
+                      {i.pair && ` + ${i.pair.color}`} / {i.size}
                     </small>
                   </div>
                   <span>{money(i.price * i.quantity)}</span>
@@ -802,17 +801,15 @@ export default function CheckoutView({ items, backTo, backLabel }: Props) {
             <dl className="ck-totals">
               <div>
                 <dt>
-                  Subtotal · {count} {count === 1 ? "item" : "itens"}
+                  Subtotal · {count} {count === 1 ? "kit" : "kits"}
                 </dt>
                 <dd>{money(subtotal)}</dd>
               </div>
               <div>
-                <dt>Frete</dt>
-                <dd className={hasAddress ? "" : "muted"}>
-                  {hasAddress
-                    ? shippingLabel(method.price)
-                    : "Insira o endereço de entrega"}
-                </dd>
+                <dt>
+                  {method.name} · {method.detail}
+                </dt>
+                <dd>{shippingLabel(method.price)}</dd>
               </div>
               <div className="ck-total">
                 <dt>Total</dt>

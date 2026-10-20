@@ -19,7 +19,15 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { categories, money, products, swatches } from "../data/products";
+import {
+  categories,
+  expressShipping,
+  KIT_PIECES,
+  money,
+  products,
+  swatches,
+} from "../data/products";
+import type { Product } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import CheckoutView from "../components/CheckoutView";
@@ -29,8 +37,22 @@ import ThemeToggle from "../components/ThemeToggle";
 const views = ["Frente", "Costas"];
 const viewName = (i: number) => views[i] ?? `Foto ${i + 1}`;
 
-// Ao trocar de cor, o tamanho e a foto escolhidos vão junto para a outra página
-type Carried = { size?: string; view?: number } | null;
+// Ao trocar de cor, o tamanho, a foto e a 2ª cor do kit vão junto para a outra página
+type Carried = { size?: string; view?: number; pair?: string } | null;
+
+// Produtos da mesma família são o mesmo modelo em outra cor
+const familyOf = (p: Product) =>
+  p.family ? products.filter((x) => x.family === p.family) : [p];
+
+// Peça de uma cor do modelo num tamanho (a 2ª cor do kit pode ser outro produto)
+const pieceOf = (p: Product, color: string, size: string) => {
+  for (const product of familyOf(p)) {
+    const variant = product.variants.find(
+      (v) => v.color === color && v.size === size
+    );
+    if (variant) return { product, variant };
+  }
+};
 
 const motion = (): ScrollBehavior =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -57,6 +79,15 @@ function ProductPage({ slug }: { slug?: string }) {
     return s && available ? s : "";
   });
   const [color, setColor] = useState(p?.colors[0] || "");
+  // 2ª cor do kit: começa na próxima cor do modelo, diferente da cor da página
+  const [pairColor, setPairColor] = useState(() => {
+    if (!p) return "";
+    const others = familyOf(p)
+      .flatMap((x) => x.colors)
+      .filter((c) => c !== p.colors[0]);
+    if (carried?.pair && others.includes(carried.pair)) return carried.pair;
+    return others[0] ?? p.colors[0];
+  });
   const [qty, setQty] = useState(1);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(
     null
@@ -99,12 +130,23 @@ function ProductPage({ slug }: { slug?: string }) {
       </main>
     );
   const variant = p.variants.find((v) => v.size === size && v.color === color);
+  const pairPiece = size ? pieceOf(p, pairColor, size) : undefined;
+  const pair = pairPiece && {
+    productId: pairPiece.product.id,
+    variantId: pairPiece.variant.id,
+    color: pairColor,
+  };
   const valid = () => {
     if (!size) {
       setNotice({ ok: false, text: "Escolha seu tamanho para continuar." });
       return false;
     }
-    if (!variant || variant.stock < qty) {
+    if (
+      !variant ||
+      variant.stock < qty ||
+      !pairPiece ||
+      pairPiece.variant.stock < qty
+    ) {
       setNotice({
         ok: false,
         text: "Essa combinação está indisponível no momento.",
@@ -115,15 +157,19 @@ function ProductPage({ slug }: { slug?: string }) {
   };
   const add = () => {
     if (!valid()) return;
-    addItem(p, size, color, qty);
-    setNotice({ ok: true, text: "Adicionado à sacola!" });
+    addItem(p, size, color, qty, pair);
+    setNotice({ ok: true, text: "Kit adicionado à sacola!" });
   };
-  // Compra direta: o checkout abre na própria página (?comprar=variante&qtd=n),
+  // Compra direta: o checkout abre na própria página (?comprar=variante&par=2ª peça&qtd=n),
   // sem passar pela sacola. O botão voltar do navegador retorna ao produto.
   const buyNow = () => {
-    if (!valid() || !variant) return;
+    if (!valid() || !variant || !pairPiece) return;
     setNotice(null);
-    setParams({ comprar: variant.id, qtd: String(qty) });
+    setParams({
+      comprar: variant.id,
+      par: pairPiece.variant.id,
+      qtd: String(qty),
+    });
   };
   // Na barra fixa, sem tamanho escolhido, rola até os tamanhos e mostra o aviso
   const quickBuy = () => {
@@ -143,9 +189,14 @@ function ProductPage({ slug }: { slug?: string }) {
   };
 
   // Cada cor do modelo é um produto da mesma família; a ordem fica fixa entre as páginas
-  const colorOptions = (
-    p.family ? products.filter((x) => x.family === p.family) : [p]
-  ).flatMap((x) => x.colors.map((c) => ({ color: c, slug: x.slug })));
+  const colorOptions = familyOf(p).flatMap((x) =>
+    x.colors.map((c) => ({ color: c, slug: x.slug }))
+  );
+  // A 2ª cor é sempre diferente da 1ª (se o modelo só tiver uma cor, repete)
+  const pairOptions = colorOptions
+    .map((o) => o.color)
+    .filter((c) => c !== color);
+  if (!pairOptions.length) pairOptions.push(color);
   const category = categories.find((c) => c.slug === p.category)?.name;
   const discount = p.oldPrice
     ? Math.round((1 - p.price / p.oldPrice) * 100)
@@ -155,9 +206,17 @@ function ProductPage({ slug }: { slug?: string }) {
   const fav = favorites.includes(p.id);
 
   const buyVariant = p.variants.find((v) => v.id === buying);
-  if (buyVariant && buyVariant.stock > 0) {
+  const buyPair =
+    buyVariant &&
+    familyOf(p)
+      .flatMap((product) => product.variants.map((variant) => ({ product, variant })))
+      .find(
+        (o) => o.variant.id === params.get("par") && o.variant.size === buyVariant.size
+      );
+  if (buyVariant && buyVariant.stock > 0 && buyPair && buyPair.variant.stock > 0) {
     const quantity = Math.min(
       buyVariant.stock,
+      buyPair.variant.stock,
       Math.max(1, Math.floor(Number(params.get("qtd"))) || 1)
     );
     return (
@@ -172,6 +231,11 @@ function ProductPage({ slug }: { slug?: string }) {
             size: buyVariant.size,
             color: buyVariant.color,
             quantity,
+            pair: {
+              productId: buyPair.product.id,
+              variantId: buyPair.variant.id,
+              color: buyPair.variant.color,
+            },
           },
         ]}
         backTo={`/produto/${p.slug}`}
@@ -185,20 +249,6 @@ function ProductPage({ slug }: { slug?: string }) {
       style={{ "--tint": swatches[color] ?? "var(--coral)" } as CSSProperties}
     >
       <header className="pdp-header">
-        <Link className="pdp-back" to="/catalogo" aria-label="Voltar à coleção">
-          <ChevronLeft size={18} />
-          <span>Coleção</span>
-        </Link>
-        <Link className="wordmark pdp-logo" to="/">
-          MARÉVIA<span>✳</span>
-        </Link>
-        <div className="pdp-header-actions">
-          <ThemeToggle />
-          <Link className="icon-button" to="/sacola" aria-label="Sacola">
-            <ShoppingBag />
-            <span className="count-badge">{count}</span>
-          </Link>
-        </div>
       </header>
 
       <div className="pdp-layout">
@@ -255,6 +305,9 @@ function ProductPage({ slug }: { slug?: string }) {
               p.name
             )}
           </h1>
+          <span className="pdp-kit-tag">
+            Kit com {KIT_PIECES} biquínis · escolha 2 cores
+          </span>
           <div className="pdp-price">
             <strong>{money(p.price)}</strong>
             {discount > 0 && (
@@ -265,6 +318,9 @@ function ProductPage({ slug }: { slug?: string }) {
             )}
           </div>
           <p className="pdp-pay">
+            Sai {money(p.price / KIT_PIECES)} cada peça
+          </p>
+          <p className="pdp-pay">
             <CreditCard size={15} /> Pix ou cartão de crédito no checkout
           </p>
           <p className="pdp-description">{p.description}</p>
@@ -272,7 +328,7 @@ function ProductPage({ slug }: { slug?: string }) {
           <div className="pdp-option">
             <div className="pdp-option-head">
               <strong>
-                Cor: <span>{color}</span>
+                1ª cor: <span>{color}</span>
               </strong>
               {colorOptions.length > 1 && (
                 <small>{colorOptions.length} cores</small>
@@ -293,6 +349,8 @@ function ProductPage({ slug }: { slug?: string }) {
                     aria-label={o.color}
                     aria-pressed={o.color === color}
                     onClick={() => {
+                      // Se escolher a mesma cor da 2ª peça, as duas trocam de lugar
+                      if (o.color === pairColor) setPairColor(color);
                       setColor(o.color);
                       setNotice(null);
                     }}
@@ -305,12 +363,58 @@ function ProductPage({ slug }: { slug?: string }) {
                     title={o.color}
                     aria-label={o.color}
                     to={`/produto/${o.slug}`}
-                    state={{ size, view: image }}
+                    state={{
+                      size,
+                      view: image,
+                      pair: o.color === pairColor ? color : pairColor,
+                    }}
                     replace
                   />
                 );
               })}
             </div>
+          </div>
+
+          <div className="pdp-option">
+            <div className="pdp-option-head">
+              <strong>
+                2ª cor do kit: <span>{pairColor}</span>
+              </strong>
+            </div>
+            <div className="pdp-swatches">
+              {pairOptions.map((c) => (
+                <button
+                  key={c}
+                  className="pdp-swatch"
+                  style={
+                    {
+                      "--swatch": swatches[c] ?? "var(--line-strong)",
+                    } as CSSProperties
+                  }
+                  title={c}
+                  aria-label={`2ª cor: ${c}`}
+                  aria-pressed={c === pairColor}
+                  onClick={() => {
+                    setPairColor(c);
+                    setNotice(null);
+                  }}
+                />
+              ))}
+            </div>
+            <p className="pdp-kit-summary">
+              <span
+                className="pdp-kit-dot"
+                style={{ background: swatches[color] }}
+                aria-hidden="true"
+              />
+              <span
+                className="pdp-kit-dot"
+                style={{ background: swatches[pairColor] }}
+                aria-hidden="true"
+              />
+              Seu kit: {color} + {pairColor}
+              {size && ` · Tam. ${size}`}
+            </p>
           </div>
 
           <div className="pdp-option" ref={sizeGroup}>
@@ -345,7 +449,7 @@ function ProductPage({ slug }: { slug?: string }) {
           </div>
 
           <div className="pdp-qty">
-            <strong>Quantidade</strong>
+            <strong>Quantidade de kits</strong>
             <div className="pdp-stepper">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
@@ -378,7 +482,7 @@ function ProductPage({ slug }: { slug?: string }) {
               COMPRAR AGORA
             </button>
             <button className="pdp-add" onClick={add}>
-              <ShoppingBag size={17} /> ADICIONAR À SACOLA
+              <ShoppingBag size={17} /> ADICIONAR KIT À SACOLA
             </button>
           </div>
 
@@ -386,8 +490,10 @@ function ProductPage({ slug }: { slug?: string }) {
             <li>
               <Truck size={19} />
               <div>
-                <strong>Entrega para todo o Brasil</strong>
-                <p>Prazo e valor do frete aparecem no checkout.</p>
+                <strong>
+                  {expressShipping.name} · {expressShipping.days}
+                </strong>
+                <p>{money(expressShipping.price)} para todo o Brasil.</p>
               </div>
             </li>
             <li>
@@ -431,8 +537,8 @@ function ProductPage({ slug }: { slug?: string }) {
         <div>
           <strong>{p.name}</strong>
           <span>
-            {money(p.price)}
-            {size && ` · Tam. ${size}`}
+            {money(p.price)} · kit {color} + {pairColor}
+            {size && ` · ${size}`}
           </span>
         </div>
         <button onClick={quickBuy}>COMPRAR</button>
