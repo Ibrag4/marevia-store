@@ -249,6 +249,17 @@ function ProductPage({ slug }: { slug?: string }) {
       style={{ "--tint": swatches[color] ?? "var(--coral)" } as CSSProperties}
     >
       <header className="pdp-header">
+        <Link className="pdp-back" to="/catalogo" aria-label="Voltar à coleção">
+        </Link>
+        <Link className="wordmark pdp-logo" to="/">
+        </Link>
+        <div className="pdp-header-actions">
+          <ThemeToggle />
+          <Link className="icon-button" to="/sacola" aria-label="Sacola">
+            <ShoppingBag />
+            <span className="count-badge">{count}</span>
+          </Link>
+        </div>
       </header>
 
       <div className="pdp-layout">
@@ -422,6 +433,9 @@ function ProductPage({ slug }: { slug?: string }) {
               <strong>
                 Tamanho{size && <span>: {size}</span>}
               </strong>
+              <Link to="/tabela-de-medidas">
+                <Ruler size={14} /> Guia de medidas
+              </Link>
             </div>
             <div className="pdp-sizes">
               {p.sizes.map((s) => {
