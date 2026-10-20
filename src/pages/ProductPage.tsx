@@ -321,7 +321,7 @@ function ProductPage({ slug }: { slug?: string }) {
             {wantsPair ? `${money(TWO_BIKINI_UNIT_PRICE)} cada biquíni` : "1 biquíni por R$ 69,90"}
           </p>
           <p className="pdp-pay">
-            <CreditCard size={15} /> Pix ou cartão de crédito no checkout
+            <CreditCard size={15} /> Pix ou cartão de crédito
           </p>
           <p className="pdp-description">{p.description}</p>
 
