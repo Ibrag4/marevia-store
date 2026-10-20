@@ -422,9 +422,6 @@ function ProductPage({ slug }: { slug?: string }) {
               <strong>
                 Tamanho{size && <span>: {size}</span>}
               </strong>
-              <Link to="/tabela-de-medidas">
-                <Ruler size={14} /> Guia de medidas
-              </Link>
             </div>
             <div className="pdp-sizes">
               {p.sizes.map((s) => {
