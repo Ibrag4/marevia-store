@@ -31,7 +31,6 @@ import type { Product } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import CheckoutView from "../components/CheckoutView";
-import ThemeToggle from "../components/ThemeToggle";
 
 // As fotos de cada produto seguem a ordem: frente, costas
 const views = ["Frente", "Costas"];
@@ -254,7 +253,6 @@ function ProductPage({ slug }: { slug?: string }) {
         <Link className="wordmark pdp-logo" to="/">
         </Link>
         <div className="pdp-header-actions">
-          <ThemeToggle />
           <Link className="icon-button" to="/sacola" aria-label="Sacola">
             <ShoppingBag />
             <span className="count-badge">{count}</span>

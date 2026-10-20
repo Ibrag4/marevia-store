@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { expressShipping, money, products } from "../data/products";
 import type { KitPair } from "../data/products";
-import ThemeToggle from "./ThemeToggle";
 
 // Cada linha é um kit: a peça principal + a 2ª cor (pair), no mesmo tamanho
 export type CheckoutLine = {
@@ -332,7 +331,7 @@ async function lookupCep(
   };
 }
 
-// Moldura do checkout: cabeçalho enxuto, com o mesmo botão de tema do resto do site
+// Moldura do checkout: cabeçalho enxuto
 export function CheckoutShell({
   backTo,
   backLabel,
@@ -350,7 +349,6 @@ export function CheckoutShell({
             MARÉVIA<span>✳</span>
           </Link>
           <div className="ck-header-actions">
-            <ThemeToggle className="ck-icon" />
             <Link
               to={backTo}
               className="ck-bag"

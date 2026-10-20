@@ -1,39 +1,22 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-export type Theme = "light" | "dark";
-const KEY = "marevia-theme";
+export type Theme = "light";
 
-// O script do index.html já aplica o tema antes da pintura (sem piscar); aqui só lemos o resultado
-const initialTheme = (): Theme =>
-  document.documentElement.dataset.theme === "dark" ? "dark" : "light";
-
-const ThemeContext = createContext<{ theme: Theme; toggle: () => void } | null>(
-  null
-);
+const ThemeContext = createContext<{ theme: Theme } | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(initialTheme);
+  const [theme] = useState<Theme>("light");
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.theme = "light";
     // Cor da barra do navegador no celular
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", theme === "dark" ? "#161412" : "#f7f1e7");
+      ?.setAttribute("content", "#f7f1e7");
   }, [theme]);
 
-  const toggle = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    try {
-      localStorage.setItem(KEY, next);
-    } catch {
-      // Sem armazenamento (aba anônima): vale só nesta visita
-    }
-  };
-
   return (
-    <ThemeContext.Provider value={{ theme, toggle }}>
+    <ThemeContext.Provider value={{ theme }}>
       {children}
     </ThemeContext.Provider>
   );
